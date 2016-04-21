@@ -1,0 +1,30 @@
+Config-Loader version 0.01_01
+========================
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DESCRIPTION
+
+Config::Loader is the cascading configuration files parser with file inclusions
+and variables interpolation support.
+
+AUTHOR
+
+Eugene Ponizovsky, <ponizovsky@gmail.com>
+
+COPYRIGHT AND LICENSE
+
+Copyright (c) 2016, Eugene Ponizovsky, <ponizovsky@gmail.com>.
+All rights reserved.
+
+This module is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
+
