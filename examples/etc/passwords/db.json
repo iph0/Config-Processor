@@ -1,0 +1,10 @@
+{ "passwords": {
+    "db": {
+      "frontend":      "frontend_db_pass",
+      "frontend-test": "frontend-test_db_pass",
+      "stat-writer":   "stat-writer_db_pass",
+      "medic":         "medic_db_pass",
+      "happy-hamster": "happy-hamster_db_pass"
+    }
+  }
+}

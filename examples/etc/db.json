@@ -1,0 +1,33 @@
+{ "db": {
+    "generic": {
+      "port":   "5432",
+      "dbname": "main",
+      "options": {
+        "PrintWarn":      0,
+        "PrintError":     0,
+        "RaiseError":     1,
+        "pg_enable_utf8": 1
+      }
+    },
+
+    "master": {
+      "underlay": { "var": "db.generic" },
+      "host":     "master-db.myservice.com"
+    },
+
+    "slave": {
+      "underlay": { "var": "db.generic" },
+      "host":     "slave-db.myservice.com"
+    },
+
+    "test": {
+      "underlay": { "var": "db.generic" },
+      "host":     "test-db.myservice.com"
+    },
+
+    "overlay": [
+      { "include": "db_production.yml" },
+      { "include": "db_test.json" }
+    ]
+  }
+}

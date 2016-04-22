@@ -1,0 +1,17 @@
+frontend_master:
+  underlay: { var: "db.master" }
+  user:     "frontend"
+  password: { var: "passwords.db.frontend" }
+
+frontend_slave:
+  underlay: { var: "db.slave" }
+  user:     "frontend"
+  password: { var: "passwords.db.frontend" }
+
+stat_writer:
+  host:     "stat-db.myservice.com"
+  user:     "stat-writer"
+  port:     "5001"
+  dbname:   "stat"
+  password: { var: passwords.db.stat-writer }
+  options:  { var: db.generic.options }

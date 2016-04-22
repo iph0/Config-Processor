@@ -1,0 +1,10 @@
+medic:
+  password: { var: passwords.system.medic }
+  home_dir: "/home/medic"
+  group:    "tester"
+
+happy-hamster:
+  password: { var: passwords.system.happy-hamster }
+  home_dir: "/home/happy-hamster"
+  group:    "tester"
+
