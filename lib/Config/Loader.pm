@@ -38,7 +38,7 @@ Hash::Merge::specify_behavior(
       HASH   => sub { Hash::Merge::_merge_hashes( $_[0], $_[1] ) },
     },
   },
-  'CONFIG_BEHAVIOR',
+  'CONFIG_PRECEDENT',
 );
 
 
@@ -56,7 +56,7 @@ sub new {
       ? $params{processing_directives}
       : 1;
 
-  $self->{_hash_merge} = Hash::Merge->new( 'CONFIG_BEHAVIOR' );
+  $self->{_hash_merge} = Hash::Merge->new( 'CONFIG_PRECEDENT' );
   $self->{_config}     = undef;
   $self->{_vars}       = {};
 
@@ -187,7 +187,7 @@ sub _process_node {
     elsif ( defined $node->{overlay} ) {
       my $layer = delete $node->{overlay};
       $layer = $self->_process_layer($layer);
-      $node = $self->{_hash_merge}->merge( $layer, $node );
+      $node = $self->{_hash_merge}->merge( $node, $layer );
     }
   }
   elsif ( $self->{interpolation} ) { # SCALAR
