@@ -8,7 +8,7 @@ our $VERSION = '0.01_01';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
-use JSON::XS;
+use Cpanel::JSON::XS;
 use Hash::Merge;
 use Data::Rmap qw( rmap_to :types );
 use Carp qw( croak );
@@ -49,6 +49,12 @@ sub new {
   my $self = bless {}, $self_class;
 
   $self->{dirs} = $params{dirs} || ['.'];
+  $self->{interpolation}
+      = exists $params{interpolation} ? $params{interpolation} : 1;
+  $self->{processing_directives}
+      = exists $params{processing_directives}
+      ? $params{processing_directives}
+      : 1;
 
   $self->{_hash_merge} = Hash::Merge->new( 'CONFIG_BEHAVIOR' );
   $self->{_config}     = undef;
@@ -64,7 +70,7 @@ sub load {
   $self->{_config} = $self->_build_tree( @config_sections );
 
   rmap_to {
-    $_ = $self->_process_directives( $_ );
+    $_ = $self->_process_node( $_ );
   } HASH|VALUE, $self->{_config};
 
   $self->{_vars} = {};
@@ -128,8 +134,9 @@ sub _build_tree {
         }
       }
 
-      my @not_found = grep { $not_found_idx{$_} == scalar @{ $self->{dirs} } }
-          keys %not_found_idx;
+      my @not_found = grep {
+        $not_found_idx{$_} == scalar @{ $self->{dirs} }
+      } keys %not_found_idx;
 
       if ( @not_found ) {
         croak "Can't locate " . join( ', ', @not_found )
@@ -153,19 +160,19 @@ sub _load_json_file {
   my $file_path = shift;
 
   open( my $fh, '<', $file_path ) || die "Can't open $file_path: $!";
-  my $data = decode_json( join( '', <$fh> ) );
+  my @data = ( decode_json( join( '', <$fh> ) ) );
   close($fh);
 
-  return $data;
+  return @data;
 }
 
-sub _process_directives {
+sub _process_node {
   my $self = shift;
   my $node = shift;
 
   return unless defined $node;
 
-  if ( ref($node) eq 'HASH' ) {
+  if ( ref($node) eq 'HASH' && $self->{processing_directives} ) {
     if ( defined $node->{'var'} ) {
       $node = $self->_resolve_var( $node->{var} );
     }
@@ -183,7 +190,7 @@ sub _process_directives {
       $node = $self->{_hash_merge}->merge( $layer, $node );
     }
   }
-  else { # SCALAR
+  elsif ( $self->{interpolation} ) { # SCALAR
     $node =~ s/\$((\$?)\{([^\}]*)\})/
         $2 ? $1 : $self->_resolve_var( $3 )/ge;
   }
@@ -196,13 +203,13 @@ sub _process_layer {
   my $layer = shift;
 
   if ( ref($layer) eq 'HASH' ) {
-    $layer = $self->_process_directives( $layer );
+    $layer = $self->_process_node( $layer );
   }
   elsif ( ref($layer) eq 'ARRAY' ) {
     my $new_layer = {};
 
     foreach my $node ( @{$layer} ) {
-      $node = $self->_process_directives( $node );
+      $node = $self->_process_node( $node );
       $new_layer = $self->{_hash_merge}->merge( $new_layer, $node );
     }
 
@@ -230,7 +237,7 @@ sub _resolve_var {
 
         if ( !@tokens ) {
           $vars->{$var_name}
-              = $self->_process_directives( $pointer->{$token} );
+              = $self->_process_node( $pointer->{$token} );
           $pointer->{$token} = $vars->{$var_name};
 
           last;
@@ -250,7 +257,7 @@ sub _resolve_var {
 
         if ( !@tokens ) {
           $vars->{$var_name}
-              = $self->_process_directives( $pointer->[$token] );
+              = $self->_process_node( $pointer->[$token] );
           $pointer->[$token] = $vars->{$var_name};
 
           last;
@@ -272,7 +279,7 @@ __END__
 =head1 NAME
 
 Config::Loader - Cascading configuration files parser with file inclusions
-and variables interpolation support.
+and variables interpolation support
 
 =head1 SYNOPSIS
 
