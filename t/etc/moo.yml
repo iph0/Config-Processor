@@ -1,0 +1,105 @@
+moo:
+  param_A: { var: foo.param_C }
+  param_B: { var: bar.param_D }
+
+  param_C:
+    - { var: foo.param_C }
+    - { var: bar.param_D }
+
+  param_D:
+    param_D_1: "moo:val_D_1"
+    param_D_2: "moo:val_D_2"
+    param_D_3: "moo:val_D_3"
+    param_D_4: "moo:val_D_4"
+
+  param_D_A:
+    underlay:  { var: moo.param_D }
+    param_D_1: "moo:val_D_A_1"
+    param_D_2: "moo:val_D_A_2"
+    param_D_5: "moo:val_D_A_5"
+
+  param_D_B:
+    underlay:  { var: moo.param_D }
+    param_D_3: "moo:val_D_B_3"
+    param_D_4: "moo:val_D_B_4"
+    param_D_5: "moo:val_D_B_5"
+
+  param_D_C:
+    underlay:   { var: moo.param_D_A }
+    param_D_1: "moo:val_D_C_1"
+    param_D_6: "moo:val_D_C_6"
+
+  param_D_D:
+    underlay:   { var: moo.param_D_B }
+    param_D_3: "moo:val_D_D_3"
+    param_D_6: "moo:val_D_D_6"
+
+  param_D_E:
+    param_D_1: "moo:val_D_E_1"
+    param_D_2: "moo:val_D_E_2"
+    param_D_5: "moo:val_D_E_5"
+    overlay:   { var: moo.param_D }
+
+  param_D_F:
+    param_D_3: "moo:val_D_F_3"
+    param_D_4: "moo:val_D_F_4"
+    param_D_5: "moo:val_D_F_5"
+    overlay:   { var: moo.param_D }
+
+  param_D_G:
+    param_D_1: "moo:val_D_G_1"
+    param_D_6: "moo:val_D_G_6"
+    overlay:   { var: moo.param_D_E }
+
+  param_D_H:
+    param_D_3: "moo:val_D_H_3"
+    param_D_6: "moo:val_D_H_6"
+    overlay:   { var: moo.param_D_F }
+
+  param_E:
+    param_E_1: { include: includes/moo_A.yml }
+    param_E_2: { include: includes/moo_B.json }
+    param_E_3: { include: includes/* }
+
+  param_F_A:
+    underlay:
+      - { var: foo.param_F }
+      - { include: includes/moo_C.yml }
+      - param_F_1: "moo:val_F_1"
+        param_F_4: "moo:val_F_4"
+    param_F_5: "moo:val_F_5"
+    param_F_6: "moo:val_F_6"
+
+  param_F_B:
+    param_F_5: "moo:val_F_5"
+    param_F_6: "moo:val_F_6"
+    overlay:
+      - { var: foo.param_F }
+      - { include: includes/moo_C.yml }
+      - param_F_1: "moo:val_F_1"
+        param_F_4: "moo:val_F_4"
+
+  param_F_C:
+    underlay:
+      - "moo:val_F_C_1"
+      - "moo:val_F_C_2"
+    param_F_1: "moo:val_F_C_1"
+    param_F_2: "moo:val_F_C_2"
+
+  param_F_D:
+    param_F_1: "moo:val_F_D_1"
+    param_F_2: "moo:val_F_D_2"
+    overlay:
+      - "moo:val_F_D_1"
+      - "moo:val_F_D_2"
+
+  param_F_E:
+    underlay:  'moo:val_F_E_3'
+    param_F_1: "moo:val_F_E_1"
+    param_F_2: "moo:val_F_E_2"
+
+  param_F_F:
+    param_F_1: "moo:val_F_F_1"
+    param_F_2: "moo:val_F_F_2"
+    overlay:   'moo:val_F_F_3'
+

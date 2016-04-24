@@ -49,18 +49,32 @@ sub new {
   my $self = bless {}, $self_class;
 
   $self->{dirs} = $params{dirs} || ['.'];
-  $self->{interpolation}
-      = exists $params{interpolation} ? $params{interpolation} : 1;
-  $self->{processing_directives}
-      = exists $params{processing_directives}
-      ? $params{processing_directives}
-      : 1;
+  $self->{interpolate_variables} = exists $params{interpolate_variables}
+      ? $params{interpolate_variables} : 1;
+  $self->{process_directives} = exists $params{process_directives}
+      ? $params{process_directives} : 1;
 
   $self->{_hash_merge} = Hash::Merge->new( 'CONFIG_PRECEDENT' );
   $self->{_config}     = undef;
   $self->{_vars}       = {};
 
   return $self;
+}
+
+{
+  no strict 'refs';
+
+  foreach my $name ( qw( interpolate_variables process_directives ) ) {
+    *{$name} = sub {
+      my $self = shift;
+
+      if ( @_ ) {
+        $self->{$name} = shift;
+      }
+
+      return $self->{$name};
+    }
+  }
 }
 
 sub load {
@@ -140,7 +154,7 @@ sub _build_tree {
 
       if ( @not_found ) {
         croak "Can't locate " . join( ', ', @not_found )
-            . " in directories: " . join( ', ', @{ $self->{dirs} } );
+            . " in " . join( ', ', @{ $self->{dirs} } );
       }
     }
   }
@@ -172,25 +186,28 @@ sub _process_node {
 
   return unless defined $node;
 
-  if ( ref($node) eq 'HASH' && $self->{processing_directives} ) {
-    if ( defined $node->{'var'} ) {
+  if ( ref($node) eq 'HASH' && $self->{process_directives} ) {
+    if ( defined $node->{var} ) {
       $node = $self->_resolve_var( $node->{var} );
     }
     elsif ( defined $node->{include} ) {
       $node = $self->_build_tree( $node->{include} );
     }
-    elsif ( defined $node->{underlay} ) {
-      my $layer = delete $node->{underlay};
-      $layer = $self->_process_layer($layer);
-      $node = $self->{_hash_merge}->merge( $layer, $node );
-    }
-    elsif ( defined $node->{overlay} ) {
-      my $layer = delete $node->{overlay};
-      $layer = $self->_process_layer($layer);
-      $node = $self->{_hash_merge}->merge( $node, $layer );
+    else {
+      if ( defined $node->{underlay} ) {
+        my $layer = delete $node->{underlay};
+        $layer = $self->_process_layer($layer);
+        $node = $self->{_hash_merge}->merge( $layer, $node );
+      }
+
+      if ( defined $node->{overlay} ) {
+        my $layer = delete $node->{overlay};
+        $layer = $self->_process_layer($layer);
+        $node = $self->{_hash_merge}->merge( $node, $layer );
+      }
     }
   }
-  elsif ( $self->{interpolation} ) { # SCALAR
+  elsif ( $self->{interpolate_variables} ) { # SCALAR
     $node =~ s/\$((\$?)\{([^\}]*)\})/
         $2 ? $1 : $self->_resolve_var( $3 )/ge;
   }
@@ -250,7 +267,7 @@ sub _resolve_var {
       else { # ARRAY
         if ( $token =~ m/\D/ ) {
           die "Argument \"$token\" isn't numeric in array element:"
-              . " \${$var_name}\n";
+              . " $var_name\n";
         }
 
         last unless defined $pointer->[$token];
@@ -268,6 +285,10 @@ sub _resolve_var {
         $pointer = $pointer->[$token];
       }
     }
+  }
+
+  unless ( defined $vars->{$var_name} ) {
+    $vars->{$var_name} = '';
   }
 
   return $vars->{$var_name};
@@ -290,6 +311,10 @@ and variables interpolation support
 =head2 new()
 
 =head2 load()
+
+=head2 interpolate_variables
+
+=head2 process_directives
 
 =head1 AUTHOR
 

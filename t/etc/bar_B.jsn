@@ -1,0 +1,30 @@
+{ "bar": {
+    "param_A": "bar_B:val_A",
+
+    "param_C": {
+      "param_C_1": "bar_B:val_C_1",
+      "param_C_3": "bar_B:val_C_3"
+    },
+
+    "param_D": [
+      "bar_B:val_D_1",
+      "bar_B:val_D_2"
+    ],
+
+    "param_E": [
+      "bar_B:val_E_1",
+      { "param_E_2_1": "bar_B:val_E_2_1",
+        "param_E_2_2": "bar_B:val_E_2_2"
+      }
+    ],
+
+    "param_F": {
+      "param_F_1": "bar_B:val_F_1",
+      "param_F_2": [
+        "bar_B:val_F_2_1",
+        "bar_B:val_F_2_2"
+      ],
+      "param_F_4": "bar_B:val_F_4"
+    }
+  }
+}

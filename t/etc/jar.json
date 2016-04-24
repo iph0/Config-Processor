@@ -1,0 +1,42 @@
+{ "jar": {
+    "param_A": "jar:${foo.param_A}",
+    "param_B": "jar:${foo.param_B}; jar:${bar.param_B}",
+
+    "param_C": {
+      "param_C_1": "jar:${foo.param_C.param_C_1}; jar:${bar.param_C.param_C_3}",
+      "param_C_2": "jar:${foo.param_C.param_C_3}; jar:${bar.param_C.param_C_1}"
+    },
+
+    "param_D": [
+      "jar:${foo.param_D.0}; jar:${bar.param_D.1}",
+      "jar:${bar.param_D.1}; jar:${foo.param_D.0}",
+      "jar:${foo.param_F.param_F_2.0}; jar:${bar.param_F.param_F_2.1}",
+      "jar:${bar.param_F.param_F_2.1}; jar:${foo.param_F.param_F_2.0}",
+      "jar:${foo.param_F.param_F_5.0}; jar:${bar.param_F.param_F_5.1}"
+    ],
+
+    "param_E": [
+      "jar:${jar.param_A}; jar:${jar.param_B}",
+      { "param_E_2_1": "jar:${jar.param_C.param_C_1}; jar:${jar.param_C.param_C_2}",
+        "param_E_2_2": "jar:${jar.param_D.0}; jar:${jar.param_D.3}"
+      },
+      "jar:${jar.param_D.1}; jar:${jar.param_D.4}"
+    ],
+
+    "param_F": {
+      "param_F_1": "jar:${jar.param_E.0}; jar:${jar.param_E.1.param_E_2_1}",
+      "param_F_2": [
+        "jar:${jar.param_E.1.param_E_2_2}",
+        "jar:${jar.param_E.2}"
+      ],
+      "param_F_3": "jar:${jar.param_F.param_F_2.0}",
+
+      "param_F_4": "jar:$${foo.param_A}",
+
+      "param_F_5": "jar:${foox.param_C.param_C_1}",
+      "param_F_6": "jar:${foo.param_CX.param_C_1}",
+      "param_F_7": "jar:${foo.param_C.param_CX}",
+      "param_F_8": "jar:${jar.param_E.3}"
+    }
+  }
+}

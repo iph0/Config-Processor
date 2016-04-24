@@ -27,7 +27,7 @@ WriteMakefile(
       license    => 'http://dev.perl.org/licenses/',
     },
   },
-  ABSTRACT_FROM => 'lib/App/Environ.pm',
+  ABSTRACT_FROM => 'lib/Config/Loader.pm',
   AUTHOR        => 'Eugene Ponizovsky <ponizovsky@gmail.com>',
   LICENSE       => 'perl',
 );
