@@ -1,4 +1,4 @@
-package Config::Loader;
+package Config::Processor;
 
 use 5.008000;
 use strict;
@@ -299,22 +299,105 @@ __END__
 
 =head1 NAME
 
-Config::Loader - Cascading configuration files parser with file inclusions
+Config::Processor - Cascading configuration files processor with file inclusions
 and variables interpolation support
 
 =head1 SYNOPSIS
 
 =head1 DESCRIPTION
 
+=head1 CONSTRUCTOR
+
+=head2 new( %params )
+
+  my $config_processor = Config::Processor->new(
+    dirs => [ qw( /etc/myapp /home/username/myapp/etc ) ],
+  );
+
+  my $another_config_processor = Config::Processor->new(
+    dirs                  => [ qw( /etc/myapp /home/username/myapp/etc ) ],
+    interpolate_variables => 0,
+    process_directives    => 0,
+  );
+
+=over
+
+=item dirs => \@dirs
+
+List of directories in which configuration files will be serched.
+
+=item interpolate_variables => $boolean
+
+Enables or disables variable interpolation in configuration files.
+
+Enabled by default.
+
+=item process_directives => $boolean
+
+Enables or disables directive processing in configuration files.
+
+Enabled by default.
+
+=back
+
 =head1 METHODS
 
-=head2 new()
+=head2 load( @config_sections )
 
-=head2 load()
+  my $config = $config_processor->load(
+    qw( users.yml db.json passwords/* pathes.yml ),
 
-=head2 interpolate_variables
+    { db => {
+        frontend_master => {
+          host => 'localhost',
+          port => '5000',
+        },
 
-=head2 process_directives
+        frontend_slave => {
+          host => 'localhost',
+          port => '5000',
+        }
+      },
+    }
+  );
+
+Attempts to load all configuration sections and returns reference to resulting
+configuration tree.
+
+Configuration section can be specified in three ways: as a relative filename,
+as a filename with wildcard characters or as a hash reference. Filenames with
+wildcard characters is processed by C<glob> function.
+
+=head2 interpolate_variables( [ $boolean ] )
+
+Enables or disables variable interpolation in configurations files.
+
+=head2 process_directives( [ $boolean ] )
+
+Enables or disables directive processing in configuration files.
+
+=head1 MERGING RULES
+
+Configuration parser merges all specified configuration sections in one
+resulting configuration tree by following rules:
+
+  Left value  Right value  Result value
+
+  SCALAR $a   SCALAR $b    SCALAR $b
+  SCALAR $a   ARRAY  \@b   ARRAY  \@b
+  SCALAR $a   HASH   \%b   HASH   \%b
+
+  ARRAY \@a   SCALAR $b    SCALAR $b
+  ARRAY \@a   ARRAY  \@b   ARRAY  \@b
+  ARRAY \@a   HASH   \%b   HASH   \%b
+
+  HASH \%a    SCALAR $b    SCALAR $b
+  HASH \%a    ARRAY  \@b   ARRAY  \@b
+  HASH \%a    HASH   \%b   HASH   { %a, %b }
+
+=head1 INTERPOLATION
+
+=head1 DIRECTIVES
 
 =head1 AUTHOR
 
@@ -329,4 +412,3 @@ This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
 
 =cut
-

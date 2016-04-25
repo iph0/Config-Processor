@@ -3,46 +3,46 @@ use strict;
 use warnings;
 
 use Test::More tests => 8;
-use Config::Loader;
+use Config::Processor;
 
-my $CONFIG_LOADER = Config::Loader->new();
+my $CONFIG_PROCESSOR = Config::Processor->new();
 
-can_ok( $CONFIG_LOADER, 'interpolate_variables' );
-can_ok( $CONFIG_LOADER, 'process_directives' );
+can_ok( $CONFIG_PROCESSOR, 'interpolate_variables' );
+can_ok( $CONFIG_PROCESSOR, 'process_directives' );
 
-t_interpolate_variables($CONFIG_LOADER);
-t_process_directives($CONFIG_LOADER);
+t_interpolate_variables($CONFIG_PROCESSOR);
+t_process_directives($CONFIG_PROCESSOR);
 
 
 sub t_interpolate_variables {
-  my $config_loader = shift;
+  my $config_processor = shift;
 
-  my $interpolate_variables = $config_loader->interpolate_variables;
+  my $interpolate_variables = $config_processor->interpolate_variables;
   is( $interpolate_variables, 1, 'get variable interpolation switch value' );
 
-  $config_loader->interpolate_variables(undef);
-  is( $config_loader->interpolate_variables,
+  $config_processor->interpolate_variables(undef);
+  is( $config_processor->interpolate_variables,
       undef, 'disable variable interpolation' );
 
-  $config_loader->interpolate_variables(1);
-  is( $config_loader->interpolate_variables, 1,
+  $config_processor->interpolate_variables(1);
+  is( $config_processor->interpolate_variables, 1,
       "enable variable interpolation" );
 
   return;
 }
 
 sub t_process_directives {
-  my $config_loader = shift;
+  my $config_processor = shift;
 
-  my $process_directives = $config_loader->process_directives;
+  my $process_directives = $config_processor->process_directives;
   is( $process_directives, 1, 'get directive processing switch value' );
 
-  $config_loader->process_directives(undef);
-  is( $config_loader->process_directives,
+  $config_processor->process_directives(undef);
+  is( $config_processor->process_directives,
       undef, 'disable directive processing' );
 
-  $config_loader->process_directives(1);
-  is( $config_loader->process_directives, 1, "enable directive processing" );
+  $config_processor->process_directives(1);
+  is( $config_processor->process_directives, 1, "enable directive processing" );
 
   return;
 }

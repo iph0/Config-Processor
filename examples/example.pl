@@ -3,15 +3,15 @@
 use strict;
 use warnings;
 
-use Config::Loader;
+use Config::Processor;
 use Data::Dumper;
 
-my $config_loader = Config::Loader->new(
-  dirs => [qw( examples/etc )],
+my $config_processor = Config::Processor->new(
+  dirs => [ qw( examples/etc ) ],
 );
 
 # Load all configuration sections
-my $config = $config_loader->load(
+my $config = $config_processor->load(
   qw( users.yml db.json passwords/* pathes.yml ),
 
   { db => {

@@ -1,14 +1,14 @@
 yar:
-  param_A:
+  param1:
     underlay:
-      - { var: moo.param_F_A }
+      - { var: moo.param6_A }
       - { include: yar_A.yml }
-      - param_A_4: 'yar:${jar.param_F.param_F_2.0}'
-        param_A_5: 'yar:val_A_5'
-    param_A_6: 'yar:${jar.param_A}'
-    param_A_7: 'yar:val_A_7'
+      - param1_4: 'yar:${jar.param6.param6_2.0}'
+        param1_5: 'yar:val1_5'
+    param1_6: 'yar:${jar.param1}'
+    param1_7: 'yar:val1_7'
     overlay:
-      - { var: moo.param_E }
-      - { var: moo.param_D_A }
-      - param_A_8: 'yar:${jar.param_B}'
-        param_A_9: 'yar:val_A_9'
+      - { var: moo.param5 }
+      - { var: moo.param4_A }
+      - param1_8: 'yar:${jar.param2}'
+        param1_9: 'yar:val1_9'

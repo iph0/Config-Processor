@@ -1,6 +1,6 @@
-Revision history for Perl extension Config::Loader.
+Revision history for Perl extension Config::Processor.
 
 0.01  Tue Apr 19 11:22:20 2016
 	- original version; created by h2xs 1.23 with options
-		-AXO --skip-exporter --skip-autoloader -b5.8.0 -n Config::Loader
+		-AXO --skip-exporter --skip-autoloader -b5.8.0 -n Config::Processor
 

@@ -1,24 +1,24 @@
 foo:
-  param_A: "foo_A:val_A"
-  param_B: "foo_A:val_B"
+  param1: "foo_A:val1"
+  param2: "foo_A:val2"
 
-  param_C:
-    param_C_1: "foo_A:val_C_1"
-    param_C_2: "foo_A:val_C_2"
+  param3:
+    param3_1: "foo_A:val3_1"
+    param3_2: "foo_A:val3_2"
 
-  param_D:
-    - "foo_A:val_D_1"
-    - "foo_A:val_D_2"
+  param4:
+    - "foo_A:val4_1"
+    - "foo_A:val4_2"
 
-  param_E:
-    - "foo_A:val_E_1"
-    - param_E_2_1: "foo_A:val_E_2_1"
-      param_E_2_2: "foo_A:val_E_2_2"
+  param5:
+    - "foo_A:val5_1"
+    - param5_2_1: "foo_A:val5_2_1"
+      param5_2_2: "foo_A:val5_2_2"
 
-  param_F:
-    param_F_1: "foo_A:val_F_1"
-    param_F_2:
-      - "foo_A:val_F_2_1"
-      - "foo_A:val_F_2_2"
-    param_F_3: "foo_A:val_F_3"
+  param6:
+    param6_1: "foo_A:val6_1"
+    param6_2:
+      - "foo_A:val6_2_1"
+      - "foo_A:val6_2_2"
+    param6_3: "foo_A:val6_3"
 

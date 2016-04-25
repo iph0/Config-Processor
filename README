@@ -1,4 +1,4 @@
-Config-Loader version 0.01_01
+Config-Processor version 0.01_01
 ========================
 
 INSTALLATION
@@ -12,7 +12,7 @@ To install this module type the following:
 
 DESCRIPTION
 
-Config::Loader is the cascading configuration files parser with file inclusions
+Config::Processor is the cascading configuration files parser with file inclusions
 and variables interpolation support.
 
 AUTHOR

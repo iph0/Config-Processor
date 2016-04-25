@@ -2,8 +2,8 @@ use 5.008000;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-  NAME               => 'Config::Loader',
-  VERSION_FROM       => 'lib/Config/Loader.pm',
+  NAME               => 'Config::Processor',
+  VERSION_FROM       => 'lib/Config/Processor.pm',
   PREREQ_PM          => {
     'File::Spec'       => '0',
     'YAML::XS'         => '0.62',
@@ -21,13 +21,13 @@ WriteMakefile(
   },
   META_MERGE => {
     resources => {
-      homepage   => 'https://github.com/iph0/Config-Loader',
-      bugtracker => 'https://github.com/iph0/Config-Loader/issues',
-      repository => 'https://github.com/iph0/Config-Loader',
+      homepage   => 'https://github.com/iph0/Config-Processor',
+      bugtracker => 'https://github.com/iph0/Config-Processor/issues',
+      repository => 'https://github.com/iph0/Config-Processor',
       license    => 'http://dev.perl.org/licenses/',
     },
   },
-  ABSTRACT_FROM => 'lib/Config/Loader.pm',
+  ABSTRACT_FROM => 'lib/Config/Processor.pm',
   AUTHOR        => 'Eugene Ponizovsky <ponizovsky@gmail.com>',
   LICENSE       => 'perl',
 );

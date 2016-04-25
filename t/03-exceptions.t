@@ -4,24 +4,24 @@ use warnings;
 
 use Test::More tests => 6;
 use Test::Fatal;
-use Config::Loader;
+use Config::Processor;
 
-my $CONFIG_LOADER = Config::Loader->new(
+my $CONFIG_PROCESSOR = Config::Processor->new(
   dirs => [ qw( t/etc ) ],
 );
 
-t_missing_extension($CONFIG_LOADER);
-t_unknown_extension($CONFIG_LOADER);
+t_missing_extension($CONFIG_PROCESSOR);
+t_unknown_extension($CONFIG_PROCESSOR);
 t_cant_locate_file();
-t_cant_parse_file($CONFIG_LOADER);
-t_invalid_array_element_index($CONFIG_LOADER);
+t_cant_parse_file($CONFIG_PROCESSOR);
+t_invalid_array_element_index($CONFIG_PROCESSOR);
 
 
 sub t_missing_extension {
-  my $config_loader = shift;
+  my $config_processor = shift;
 
   like(
-    exception { $config_loader->load( qw( foo ) ) },
+    exception { $config_processor->load( qw( foo ) ) },
     qr/^File extension not specified\. Don't known how parse t\/etc\/foo/,
     'missing extension'
   );
@@ -30,10 +30,10 @@ sub t_missing_extension {
 }
 
 sub t_unknown_extension {
-  my $config_loader = shift;
+  my $config_processor = shift;
 
   like(
-    exception { $config_loader->load( qw( foo.xml ) ) },
+    exception { $config_processor->load( qw( foo.xml ) ) },
     qr/^Unknown file extension "\.xml" encountered\. Don't known how parse t\/etc\/foo\.xml/,
     'unknown extension'
   );
@@ -42,12 +42,12 @@ sub t_unknown_extension {
 }
 
 sub t_cant_locate_file {
-  my $config_loader = Config::Loader->new(
+  my $config_processor = Config::Processor->new(
     dirs => [ qw( t/etc my/etc ) ],
   );
 
   like(
-    exception { $config_loader->load( 'foo.json bar.yml' ) },
+    exception { $config_processor->load( 'foo.json bar.yml' ) },
     qr/^Can't locate foo\.json, bar\.yml in t\/etc, my\/etc/,
     'unknown extension'
   );
@@ -56,16 +56,16 @@ sub t_cant_locate_file {
 }
 
 sub t_cant_parse_file {
-  my $config_loader = shift;
+  my $config_processor = shift;
 
   like(
-    exception { my $c = $config_loader->load( qw( invalid.yml ) ) },
+    exception { my $c = $config_processor->load( qw( invalid.yml ) ) },
     qr/^Can't parse t\/etc\/invalid\.yml/,
     "can't parse file; YAML"
   );
 
   like(
-    exception { my $c = $config_loader->load( qw( invalid.json ) ) },
+    exception { my $c = $config_processor->load( qw( invalid.json ) ) },
     qr/^Can't parse t\/etc\/invalid\.json/,
     "can't parse file; JSON"
   );
@@ -74,18 +74,18 @@ sub t_cant_parse_file {
 }
 
 sub t_invalid_array_element_index {
-  my $config_loader = shift;
+  my $config_processor = shift;
 
   like(
     exception {
-      $config_loader->load( qw( foo_A.yaml ),
+      $config_processor->load( qw( foo_A.yaml ),
         { foo => {
-            param_G => { var => 'foo.param_D.param_D_1' },
+            param_G => { var => 'foo.param4.param4_1' },
           },
         }
       );
     },
-    qr/^Argument \"param_D_1\" isn't numeric in array element: foo\.param_D\.param_D_1/,
+    qr/^Argument \"param4_1\" isn't numeric in array element: foo\.param4\.param4_1/,
     'invalid array element index'
   );
 
