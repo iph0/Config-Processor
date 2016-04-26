@@ -12,7 +12,7 @@ To install this module type the following:
 
 DESCRIPTION
 
-Config::Processor is the cascading configuration files parser with file inclusions
+Config::Processor is the cascading configuration files processor with file inclusions
 and variables interpolation support.
 
 AUTHOR
@@ -26,5 +26,4 @@ All rights reserved.
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
-
 

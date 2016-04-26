@@ -1,0 +1,11 @@
+myapp:
+  media_formats: [ "images", "audio", "video" ]
+
+  dirs:
+    root_dir: "/myapp"
+    templates_dir: "${myapp.dirs.root_dir}/templates"
+    sessions_dir: "${myapp.dirs.root_dir}/sessions"
+    media_dirs:
+      - "${myapp.dirs.root_dir}/medis/${myapp.media_formats.0}"
+      - "${myapp.dirs.root_dir}/media/${myapp.media_formats.1}"
+      - "${myapp.dirs.root_dir}/media/${myapp.media_formats.2}"

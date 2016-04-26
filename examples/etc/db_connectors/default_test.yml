@@ -1,0 +1,3 @@
+default_test:
+  underlay: { var: myapp.db.connectors.default }
+  host: 'stat-test.mydb.com'

@@ -113,6 +113,8 @@ sub _build_tree {
           my @file_pathes = glob( File::Spec->catfile( $dir, $file_pattern ) );
 
           foreach my $file_path (@file_pathes) {
+            next if -d $file_path;
+
             unless ( $file_path =~ m/\.([^.]+)$/ ) {
               croak "File extension not specified."
                   . " Don't known how parse $file_path";
@@ -299,12 +301,39 @@ __END__
 
 =head1 NAME
 
-Config::Processor - Cascading configuration files processor with file inclusions
-and variables interpolation support
+Config::Processor - Cascading configuration files processor with additional
+features
 
 =head1 SYNOPSIS
 
+  use Config::Processor;
+
+  my $config_processor = Config::Processor->new(
+    dirs => [ qw( /etc/myapp /home/username/etc/myapp ) ],
+  );
+
+  my $config = $config_processor->load( qw( main.yml db.json metrics/* ),
+    { db => {
+        frontend_master => {
+          host => 'localhost',
+          port => '4321',
+        },
+
+        frontend_slave => {
+          host => 'localhost',
+          port => '4321',
+        }
+      },
+    }
+  );
+
 =head1 DESCRIPTION
+
+Config::Processor is the cascading configuration files processor, which
+supports file inclusions, variables interpolation and other configuration tree
+manipulations. Works with YAML and JSON file formats. File format is defined by
+file extension. Supports following file extensions: F<.yml>, F<.yaml>, F<.jsn>,
+F<.json>.
 
 =head1 CONSTRUCTOR
 
@@ -344,29 +373,15 @@ Enabled by default.
 
 =head2 load( @config_sections )
 
-  my $config = $config_processor->load(
-    qw( users.yml db.json passwords/* pathes.yml ),
-
-    { db => {
-        frontend_master => {
-          host => 'localhost',
-          port => '5000',
-        },
-
-        frontend_slave => {
-          host => 'localhost',
-          port => '5000',
-        }
-      },
-    }
-  );
+  my $config = $config_processor->load( qw( myapp.yml metrics/* ),
+      \%local_config );
 
 Attempts to load all configuration sections and returns reference to resulting
 configuration tree.
 
-Configuration section can be specified in three ways: as a relative filename,
-as a filename with wildcard characters or as a hash reference. Filenames with
-wildcard characters is processed by C<glob> function.
+Configuration section can be a relative filename, a filename with wildcard
+characters or a hash reference. Filenames with wildcard characters is processed
+by C<CORE::glob> function and supports the same syntax.
 
 =head2 interpolate_variables( [ $boolean ] )
 
@@ -378,8 +393,7 @@ Enables or disables directive processing in configuration files.
 
 =head1 MERGING RULES
 
-Configuration parser merges all specified configuration sections in one
-resulting configuration tree by following rules:
+Config::Processor merges all configuration sections in one resulting configuration tree by following rules:
 
   Left value  Right value  Result value
 
@@ -395,9 +409,228 @@ resulting configuration tree by following rules:
   HASH \%a    ARRAY  \@b   ARRAY  \@b
   HASH \%a    HASH   \%b   HASH   { %a, %b }
 
+For example, we have two configuration files. F<db.yml> at the left side:
+
+  db:
+    connectors:
+      stat_writer:
+        host:     "stat.mydb.com"
+        port:     "1234"
+        dbname:   "stat"
+        username: "stat_writer"
+        password: "stat_writer_pass"
+
+And F<db_test.yml> at the right side.
+
+  db:
+    connectors:
+      stat_writer:
+        host:     "localhost"
+        username: "test"
+        password: "test_pass"
+
+After processing of two files we will get:
+
+  db => {
+    connectors => {
+      stat_writer => {
+        host      => "localhost",
+        port:     => "4321",
+        dbname:   => "stat",
+        username: => "test",
+        password: => "test_pass",
+      },
+    },
+  },
+
 =head1 INTERPOLATION
 
+Config::Processor can interpolate variables in string values. For example, we
+have F<myapp.yml> file:
+
+  myapp:
+    media_formats: [ "images", "audio", "video" ]
+
+    dirs:
+      root_dir: "/myapp"
+      templates_dir: "${myapp.dirs.root_dir}/templates"
+      sessions_dir: "${myapp.dirs.root_dir}/sessions"
+      media_dirs:
+        - "${myapp.dirs.root_dir}/medis/${myapp.media_formats.0}"
+        - "${myapp.dirs.root_dir}/media/${myapp.media_formats.1}"
+        - "${myapp.dirs.root_dir}/media/${myapp.media_formats.2}"
+
+After processing of the file we will get:
+
+  myapp => {
+    media_formats => [ "images", "audio", "video" ],
+
+    dirs => {
+      root_dir      => "/myapp",
+      templates_dir => "/myapp/templates",
+      sessions_dir  => "/myapp/sessions",
+      media_dirs    => [
+        "/myapp/media/images",
+        "/myapp/media/audio",
+        "/myapp/media/video",
+      ],
+    },
+  },
+
+To escape variable interpolation add one more "$" symbol.
+
+  templates_dir: "$${myapp.dirs.root_dir}/templates"
+
+After processing we will get:
+
+  templates_dir => ${myapp.dirs.root_dir}/templates,
+
 =head1 DIRECTIVES
+
+=over
+
+=item var
+
+Assigns configuration parameter value to another configuration parameter.
+
+  myapp:
+    db:
+      generic_options:
+        PrintWarn:  0
+        PrintError: 0
+        RaiseError: 1
+
+      connectors:
+        stat_master:
+          host:     "stat-master.mydb.com"
+          port:     "1234"
+          dbname:   "stat"
+          username: "stat_writer"
+          password: "stat_writer_pass"
+          options: { var: myapp.db.generic_options }
+
+        stat_slave:
+          host:     "stat-slave.mydb.com"
+          port:     "1234"
+          dbname:   "stat"
+          username: "stat_reader"
+          password: "stat_reader_pass"
+          options: { var: myapp.db.generic_options }
+
+=item include
+
+Loads configuration parameters from file or multiple files and assigns it to
+specified configuration parameter. Argument of C<include> directive can be
+relative filename or a filename with wildcard characters. If loading multiple
+files, configuration data from them will be merged before assignment.
+
+  myapp:
+    db:
+      generic_options:
+        PrintWarn:  0
+        PrintError: 0
+        RaiseError: 1
+
+      connectors: { include: db_connectors.yml }
+
+    metrics: { include: metrics/* }
+
+=item underlay
+
+Merges configuration parameters from variables or files with configuration
+parameters at the same nesting level and can be overrided by them. For example,
+you can use C<underlay> directive to set default parameters.
+
+  myapp:
+    db:
+      connectors:
+        default:
+          port:   "1234"
+          dbname: "stat"
+          options:
+            PrintWarn:  0
+            PrintError: 0
+            RaiseError: 1
+
+        stat_master:
+          underlay: { var: myapp.db.connectors.default }
+          host:     "stat-master.mydb.com"
+          username: "stat_writer"
+          password: "stat_writer_pass"
+
+        stat_slave:
+          underlay: { var: myapp.db.connectors.default }
+          host:     "stat-slave.mydb.com"
+          username: "stat_reader"
+          password: "stat_reader_pass"
+
+You can move default parameters in separate file.
+
+  myapp:
+    db:
+      connectors:
+        underlay:
+          - { include: db_connectors/default.yml }
+          - { include: db_connectors/default_test.yml }
+
+        stat_master:
+          underlay: { var: myapp.db.connectors.default }
+          host:     "stat-master.mydb.com"
+          username: "stat_writer"
+          password: "stat_writer_pass"
+
+        stat_slave:
+          underlay: { var: myapp.db.connectors.default }
+          host:     "stat-slave.mydb.com"
+          username: "stat_reader"
+          password: "stat_reader_pass"
+
+        test:
+          underlay: { var: myapp.db.connectors.default_test }
+          username: "test"
+          password: "test_pass"
+
+=item overlay
+
+Merges configuration parameters from variables or files with configuration
+parameters at the same nesting level and can override them. For example, you
+can use C<overlay> directive to temporaly overriding regular configuration
+parameters.
+
+  myapp:
+    db:
+      connectors:
+        default:
+          port:   "1234"
+          dbname: "stat"
+          options:
+            PrintWarn:  0
+            PrintError: 0
+            RaiseError: 1
+
+        test:
+          host: "localhost"
+          port: "4321"
+
+        stat_master:
+          underlay: { var: myapp.db.connectors.default }
+          host:     "stat-master.mydb.com"
+          username: "stat_writer"
+          password: "stat_writer_pass"
+          overlay: { var: myapp.db.connectors.test }
+
+        stat_slave:
+          underlay: { var: myapp.db.connectors.default }
+          host:     "stat-slave.mydb.com"
+          username: "stat_reader"
+          password: "stat_reader_pass"
+          overlay: { var: myapp.db.connectors.test }
+
+To disable overriding just assign to C<test> connector empty hash.
+
+  debug: {}
+
+=back
 
 =head1 AUTHOR
 

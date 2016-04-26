@@ -1,9 +1,0 @@
-passwords:
-  system:
-    perlman:       'perlman_system_pass'
-    raptor:        'raptor_system_pass'
-    firecat:       'firecat_system_pass'
-    office-daemon: 'office-daemon_system_pass'
-    medic:         'medic_system_pass'
-    happy-hamster: 'happy-hamster_system_pass'
-
