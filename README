@@ -12,8 +12,11 @@ To install this module type the following:
 
 DESCRIPTION
 
-Config::Processor is the cascading configuration files processor with file inclusions
-and variables interpolation support.
+Config::Processor is the cascading configuration files processor, which
+supports file inclusions, variables interpolation and other manipulations with
+configuration tree. Works with YAML and JSON file formats. File format is
+determined by the extension. Supports following file extensions: ".yml",
+".yaml", ".jsn", ".json". See POD documentation for more information.
 
 AUTHOR
 

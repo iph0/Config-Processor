@@ -312,28 +312,27 @@ features
     dirs => [ qw( /etc/myapp /home/username/etc/myapp ) ],
   );
 
-  my $config = $config_processor->load( qw( main.yml db.json metrics/* ),
-    { db => {
-        frontend_master => {
-          host => 'localhost',
-          port => '4321',
+  my $config = $config_processor->load( qw( dirs.yml db.json metrics/* ),
+    { myapp => {
+        db => {
+          connectors => {
+            stat_master => {
+              host => 'localhost',
+              port => '4321',
+            },
+          },
         },
-
-        frontend_slave => {
-          host => 'localhost',
-          port => '4321',
-        }
       },
-    }
+    },
   );
 
 =head1 DESCRIPTION
 
 Config::Processor is the cascading configuration files processor, which
-supports file inclusions, variables interpolation and other configuration tree
-manipulations. Works with YAML and JSON file formats. File format is defined by
-file extension. Supports following file extensions: F<.yml>, F<.yaml>, F<.jsn>,
-F<.json>.
+supports file inclusions, variables interpolation and other manipulations with
+configuration tree. Works with YAML and JSON file formats. File format is
+determined by the extension. Supports following file extensions: F<.yml>,
+F<.yaml>, F<.jsn>, F<.json>.
 
 =head1 CONSTRUCTOR
 
@@ -343,7 +342,7 @@ F<.json>.
     dirs => [ qw( /etc/myapp /home/username/myapp/etc ) ],
   );
 
-  my $another_config_processor = Config::Processor->new(
+  $config_processor = Config::Processor->new(
     dirs                  => [ qw( /etc/myapp /home/username/myapp/etc ) ],
     interpolate_variables => 0,
     process_directives    => 0,
@@ -353,19 +352,15 @@ F<.json>.
 
 =item dirs => \@dirs
 
-List of directories in which configuration files will be serched.
+List of directories, in which configuration processor will search files.
 
 =item interpolate_variables => $boolean
 
-Enables or disables variable interpolation in configuration files.
-
-Enabled by default.
+Enables or disables variable interpolation. Enabled by default.
 
 =item process_directives => $boolean
 
-Enables or disables directive processing in configuration files.
-
-Enabled by default.
+Enables or disables directive processing. Enabled by default.
 
 =back
 
@@ -373,7 +368,7 @@ Enabled by default.
 
 =head2 load( @config_sections )
 
-  my $config = $config_processor->load( qw( myapp.yml metrics/* ),
+  my $config = $config_processor->load( qw( dirs.yml db.json metrics/* ),
       \%local_config );
 
 Attempts to load all configuration sections and returns reference to resulting
@@ -420,7 +415,7 @@ For example, we have two configuration files. F<db.yml> at the left side:
         username: "stat_writer"
         password: "stat_writer_pass"
 
-And F<db_test.yml> at the right side.
+And F<db_test.yml> at the right side:
 
   db:
     connectors:
@@ -429,13 +424,13 @@ And F<db_test.yml> at the right side.
         username: "test"
         password: "test_pass"
 
-After processing of two files we will get:
+After merging of two files we will get:
 
   db => {
     connectors => {
       stat_writer => {
         host      => "localhost",
-        port:     => "4321",
+        port:     => "1234",
         dbname:   => "stat",
         username: => "test",
         password: => "test_pass",
@@ -477,7 +472,7 @@ After processing of the file we will get:
     },
   },
 
-To escape variable interpolation add one more "$" symbol.
+To escape variable interpolation add one more "$" symbol before variable.
 
   templates_dir: "$${myapp.dirs.root_dir}/templates"
 
@@ -489,7 +484,7 @@ After processing we will get:
 
 =over
 
-=item var
+=item var: varname
 
 Assigns configuration parameter value to another configuration parameter.
 
@@ -517,12 +512,12 @@ Assigns configuration parameter value to another configuration parameter.
           password: "stat_reader_pass"
           options: { var: myapp.db.generic_options }
 
-=item include
+=item include: filename
 
 Loads configuration parameters from file or multiple files and assigns it to
 specified configuration parameter. Argument of C<include> directive can be
 relative filename or a filename with wildcard characters. If loading multiple
-files, configuration data from them will be merged before assignment.
+files, configuration parameters from them will be merged before assignment.
 
   myapp:
     db:
@@ -537,9 +532,12 @@ files, configuration data from them will be merged before assignment.
 
 =item underlay
 
-Merges configuration parameters from variables or files with configuration
-parameters at the same nesting level and can be overrided by them. For example,
-you can use C<underlay> directive to set default parameters.
+Merges specified configuration parameters with parameters located at the same
+context. Configuration parameters from the context overrides parameters from
+the directive. C<underlay> directive most usefull in combination with C<var>
+and C<include> directives.
+
+For example, you can use this directive to set default values of parameters.
 
   myapp:
     db:
@@ -592,10 +590,13 @@ You can move default parameters in separate file.
 
 =item overlay
 
-Merges configuration parameters from variables or files with configuration
-parameters at the same nesting level and can override them. For example, you
-can use C<overlay> directive to temporaly overriding regular configuration
-parameters.
+Merges specified configuration parameters with parameters located at the same
+context. Configuration parameters from the directive overrides parameters from
+the context. C<overlay> directive most usefull in combination with C<var> and
+C<include> directives.
+
+For example, you can use C<overlay> directive to temporaly overriding regular
+configuration parameters.
 
   myapp:
     db:
