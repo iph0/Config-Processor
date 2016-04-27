@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.01_01';
+our $VERSION = '0.02';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -629,7 +629,7 @@ configuration parameters.
 
 To disable overriding just assign to C<test> connector empty hash.
 
-  debug: {}
+  test: {}
 
 =back
 
