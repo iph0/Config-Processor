@@ -4,13 +4,12 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03_01';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
 use Cpanel::JSON::XS;
 use Hash::Merge;
-use Data::Rmap qw( rmap_to :types );
 use Carp qw( croak );
 
 my %FILE_EXTENSIONS_MAP = (
@@ -81,11 +80,8 @@ sub load {
   my $self            = shift;
   my @config_sections = @_;
 
-  $self->{_config} = $self->_build_tree( @config_sections );
-
-  rmap_to {
-    $_ = $self->_process_node( $_ );
-  } HASH|VALUE, $self->{_config};
+  $self->{_config} = $self->_build_tree(@config_sections);
+  $self->_process_tree( $self->{_config} );
 
   $self->{_vars} = {};
 
@@ -182,13 +178,36 @@ sub _load_json_file {
   return @data;
 }
 
+sub _process_tree {
+  my $self = shift;
+
+  $_[0] = $self->_process_node( $_[0] );
+
+  if ( ref( $_[0] ) eq 'HASH' ) {
+    foreach ( values %{ $_[0] } ) {
+      $self->_process_tree($_);
+    }
+  }
+  elsif ( ref( $_[0] ) eq 'ARRAY' ) {
+    foreach ( @{ $_[0] } ) {
+      $self->_process_tree($_);
+    }
+  }
+
+  return;
+}
+
 sub _process_node {
   my $self = shift;
   my $node = shift;
 
   return unless defined $node;
 
-  if ( ref($node) eq 'HASH' && $self->{process_directives} ) {
+  if ( !ref($node) && $self->{interpolate_variables} ) {
+    $node =~ s/\$((\$?)\{([^\}]*)\})/
+        $2 ? $1 : $self->_resolve_var( $3 )/ge;
+  }
+  elsif ( ref($node) eq 'HASH' && $self->{process_directives} ) {
     if ( defined $node->{var} ) {
       $node = $self->_resolve_var( $node->{var} );
     }
@@ -208,10 +227,6 @@ sub _process_node {
         $node = $self->{_hash_merge}->merge( $node, $layer );
       }
     }
-  }
-  elsif ( $self->{interpolate_variables} ) { # SCALAR
-    $node =~ s/\$((\$?)\{([^\}]*)\})/
-        $2 ? $1 : $self->_resolve_var( $3 )/ge;
   }
 
   return $node;
@@ -312,7 +327,9 @@ features
     dirs => [ qw( /etc/myapp /home/username/etc/myapp ) ],
   );
 
-  my $config = $config_processor->load( qw( dirs.yml db.json metrics/* ),
+  my $config = $config_processor->load(
+    qw( dirs.yml db.json metrics/* ),
+
     { myapp => {
         db => {
           connectors => {
@@ -339,7 +356,7 @@ F<.yaml>, F<.jsn>, F<.json>.
 =head2 new( %params )
 
   my $config_processor = Config::Processor->new(
-    dirs => [ qw( /etc/myapp /home/username/myapp/etc ) ],
+    dirs => [ qw( /etc/myapp /home/username/etc/myapp ) ],
   );
 
   $config_processor = Config::Processor->new(
@@ -367,9 +384,6 @@ Enables or disables directive processing. Enabled by default.
 =head1 METHODS
 
 =head2 load( @config_sections )
-
-  my $config = $config_processor->load( qw( dirs.yml db.json metrics/* ),
-      \%local_config );
 
 Attempts to load all configuration sections and returns reference to resulting
 configuration tree.

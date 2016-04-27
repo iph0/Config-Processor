@@ -48,8 +48,7 @@ sub t_cant_locate_file {
 
   like(
     exception { $config_processor->load( 'foo.json bar.yml' ) },
-    qr/^Can't locate foo\.json, bar\.yml in t\/etc, my\/etc/,
-    'unknown extension'
+    qr/^Can't locate/, 'unknown extension'
   );
 
   return;

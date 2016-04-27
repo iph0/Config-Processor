@@ -2,7 +2,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-use Test::More tests => 9;
+use Test::More tests => 7;
 use Config::Processor;
 
 my $CONFIG_PROCESSOR = Config::Processor->new(
@@ -18,8 +18,8 @@ t_merging_mixed($CONFIG_PROCESSOR);
 t_variable_interpolation_on($CONFIG_PROCESSOR);
 t_variable_interpolation_off();
 
-t_directive_processing_on($CONFIG_PROCESSOR);
-t_directive_processing_off();
+#t_directive_processing_on($CONFIG_PROCESSOR);
+#t_directive_processing_off();
 
 t_complete_processing($CONFIG_PROCESSOR);
 
@@ -1336,6 +1336,32 @@ sub t_complete_processing {
         param6_5 => 'moo:val6_5',
         param6_6 => 'moo:val6_6',
         param6_7 => 'moo_C:val6_7',
+      },
+
+      param2 => {
+        param2_1 => {
+          param2_1_2 => 'yar_B:val2_1_2',
+          param2_1_1 => 'yar_B:val2_1_1'
+        },
+
+        param2_2 => {
+          param2_2_1 => 'yar_B:val2_2_1',
+          param2_2_2 => 'yar_B:val2_2_2'
+        },
+
+        param2_3 => {
+          param2_3_3 => 'yar:val2_3_3',
+          param2_1_2 => 'yar_B:val2_1_2',
+          param2_3_4 => 'yar:val2_3_4',
+          param2_1_1 => 'yar_B:val2_1_1'
+        },
+
+        param2_4 => {
+          param2_4_3 => 'yar:val2_4_3',
+          param2_4_4 => 'yar:val2_4_4',
+          param2_2_1 => 'yar_B:val2_2_1',
+          param2_2_2 => 'yar_B:val2_2_2'
+        },
       },
     },
   };

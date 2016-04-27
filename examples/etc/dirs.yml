@@ -9,3 +9,4 @@ myapp:
       - "${myapp.dirs.root_dir}/medis/${myapp.media_formats.0}"
       - "${myapp.dirs.root_dir}/media/${myapp.media_formats.1}"
       - "${myapp.dirs.root_dir}/media/${myapp.media_formats.2}"
+

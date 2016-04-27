@@ -11,7 +11,9 @@ my $config_processor = Config::Processor->new(
 );
 
 # Load all configuration sections
-my $config = $config_processor->load( qw( dirs.yml db.json ),
+my $config = $config_processor->load(
+  qw( dirs.yml db.json ),
+
   { myapp => {
       db => {
         connectors => {
