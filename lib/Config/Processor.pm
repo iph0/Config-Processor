@@ -383,7 +383,7 @@ F<.yaml>, F<.jsn>, F<.json>.
 =item dirs => \@dirs
 
 List of directories, in which configuration processor will search files. If
-parameter not specified, current directory will be used.
+the parameter not specified, current directory will be used.
 
 =item interpolate_variables => $boolean
 
