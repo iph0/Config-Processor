@@ -338,7 +338,7 @@ features
 
   my $config = $config_processor->load( qw( dirs.yml db.json metrics/* ) );
 
-  my $another_config = $config_processor->load(
+  $config = $config_processor->load(
     qw( dirs.yml db.json redis.yml mongodb.json metrics/* ),
 
     { myapp => {
@@ -370,8 +370,10 @@ F<.yaml>, F<.jsn>, F<.json>.
     dirs => [ qw( /etc/myapp /home/username/etc/myapp ) ],
   );
 
-  my $another_config_processor = Config::Processor->new(
-    dirs                  => [ qw( /etc/myapp /home/username/myapp/etc ) ],
+  $config_processor = Config::Processor->new();
+
+  $config_processor = Config::Processor->new(
+    dirs                  => [ qw( /etc/myapp /home/username/etc/myapp ) ],
     interpolate_variables => 0,
     process_directives    => 0,
   );
@@ -380,7 +382,8 @@ F<.yaml>, F<.jsn>, F<.json>.
 
 =item dirs => \@dirs
 
-List of directories, in which configuration processor will search files.
+List of directories, in which configuration processor will search files. If
+parameter not specified, current directory will be used.
 
 =item interpolate_variables => $boolean
 
@@ -402,6 +405,8 @@ configuration tree.
 Configuration section can be a relative filename, a filename with wildcard
 characters or a hash reference. Filenames with wildcard characters is processed
 by C<CORE::glob> function and supports the same syntax.
+
+  my $config = $config_processor->load( qw( myapp.yml extras/* ), \%hard_config );
 
 =head2 interpolate_variables( [ $boolean ] )
 
