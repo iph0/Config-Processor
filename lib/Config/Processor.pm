@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.05_01';
+our $VERSION = '0.06';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -432,7 +432,7 @@ Config::Processor merges all configuration sections in one resulting configurati
 
   HASH \%a    SCALAR $b    SCALAR $b
   HASH \%a    ARRAY  \@b   ARRAY  \@b
-  HASH \%a    HASH   \%b   HASH   { %a, %b }
+  HASH \%a    HASH   \%b   HASH   recursive_merge( \%a, \%b )
 
 For example, we have two configuration files. F<db.yml> at the left side:
 
@@ -592,7 +592,7 @@ For example, you can use this directive to set default values of parameters.
           username: "stat_reader"
           password: "stat_reader_pass"
 
-You can move default parameters in separate file.
+You can move default parameters in separate files.
 
   myapp:
     db:

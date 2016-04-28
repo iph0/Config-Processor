@@ -1,6 +1,9 @@
 Revision history for Perl extension Config::Processor.
 
-0.04 Wed Apr 28 14:39:38 MSK 2016
+0.06 Thu Apr 28 20:51:52 MSK 2016
+  - Minor changes in POD
+
+0.04 Thu Apr 28 14:39:38 MSK 2016
   - Data::Rmap was replaced by own function.
   - Fixed wrong behavior during processing of directives.
   - Improved logic of tree traversal.
