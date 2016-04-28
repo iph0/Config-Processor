@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05_01';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -481,7 +481,7 @@ have F<myapp.yml> file:
       templates_dir: "${myapp.dirs.root_dir}/templates"
       sessions_dir: "${myapp.dirs.root_dir}/sessions"
       media_dirs:
-        - "${myapp.dirs.root_dir}/medis/${myapp.media_formats.0}"
+        - "${myapp.dirs.root_dir}/media/${myapp.media_formats.0}"
         - "${myapp.dirs.root_dir}/media/${myapp.media_formats.1}"
         - "${myapp.dirs.root_dir}/media/${myapp.media_formats.2}"
 
