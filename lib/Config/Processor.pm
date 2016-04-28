@@ -4,12 +4,13 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.04';
+our $VERSION = '0.03_02';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
 use Cpanel::JSON::XS;
 use Hash::Merge;
+use Scalar::Util qw( refaddr );
 use Carp qw( croak );
 
 my %FILE_EXTENSIONS_MAP = (
@@ -56,6 +57,7 @@ sub new {
   $self->{_hash_merge} = Hash::Merge->new( 'CONFIG_PRECEDENT' );
   $self->{_config}     = undef;
   $self->{_vars}       = {};
+  $self->{_seen_nodes} = {};
 
   return $self;
 }
@@ -83,7 +85,8 @@ sub load {
   $self->{_config} = $self->_build_tree(@config_sections);
   $self->_process_tree( $self->{_config} );
 
-  $self->{_vars} = {};
+  $self->{_vars}       = {};
+  $self->{_seen_nodes} = {};
 
   return $self->{_config};
 }
@@ -182,6 +185,12 @@ sub _process_tree {
   my $self = shift;
 
   $_[0] = $self->_process_node( $_[0] );
+
+  if ( my $node_addr = refaddr( $_[0] ) ) {
+    return if $self->{_seen_nodes}{$node_addr};
+
+    $self->{_seen_nodes}{$node_addr} = 1;
+  }
 
   if ( ref( $_[0] ) eq 'HASH' ) {
     foreach ( values %{ $_[0] } ) {
