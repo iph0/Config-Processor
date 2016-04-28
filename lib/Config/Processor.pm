@@ -214,7 +214,7 @@ sub _process_node {
 
   if ( !ref($node) && $self->{interpolate_variables} ) {
     $node =~ s/\$((\$?)\{([^\}]*)\})/
-        $2 ? $1 : $self->_resolve_var( $3 )/ge;
+        $2 ? $1 : ( $self->_resolve_var( $3 ) || '' )/ge;
   }
   elsif ( ref($node) eq 'HASH' && $self->{process_directives} ) {
     if ( defined $node->{var} ) {
@@ -268,9 +268,11 @@ sub _resolve_var {
 
   my $vars = $self->{_vars};
 
-  unless ( defined $vars->{$var_name}  ) {
+  unless ( defined $vars->{$var_name} ) {
     my @tokens = split( /\./, $var_name );
     my $pointer = $self->{_config};
+
+    my $value;
 
     while ( 1 ) {
       my $token = shift @tokens;
@@ -279,9 +281,8 @@ sub _resolve_var {
         last unless defined $pointer->{$token};
 
         if ( !@tokens ) {
-          $vars->{$var_name}
-              = $self->_process_node( $pointer->{$token} );
-          $pointer->{$token} = $vars->{$var_name};
+          $value = $self->_process_node( $pointer->{$token} );
+          $pointer->{$token} = $value;
 
           last;
         }
@@ -299,9 +300,8 @@ sub _resolve_var {
         last unless defined $pointer->[$token];
 
         if ( !@tokens ) {
-          $vars->{$var_name}
-              = $self->_process_node( $pointer->[$token] );
-          $pointer->[$token] = $vars->{$var_name};
+          $value = $self->_process_node( $pointer->[$token] );
+          $pointer->[$token] = $value;
 
           last;
         }
@@ -311,10 +311,10 @@ sub _resolve_var {
         $pointer = $pointer->[$token];
       }
     }
-  }
 
-  unless ( defined $vars->{$var_name} ) {
-    $vars->{$var_name} = '';
+    if ( defined $value ) {
+      $vars->{$var_name} = $value;
+    }
   }
 
   return $vars->{$var_name};
