@@ -2,7 +2,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-use Test::More tests => 7;
+use Test::More tests => 9;
 use Config::Processor;
 
 my $CONFIG_PROCESSOR = Config::Processor->new(
@@ -18,8 +18,8 @@ t_merging_mixed($CONFIG_PROCESSOR);
 t_variable_interpolation_on($CONFIG_PROCESSOR);
 t_variable_interpolation_off();
 
-#t_directive_processing_on($CONFIG_PROCESSOR);
-#t_directive_processing_off();
+t_directive_processing_on($CONFIG_PROCESSOR);
+t_directive_processing_off();
 
 t_complete_processing($CONFIG_PROCESSOR);
 
