@@ -9,6 +9,7 @@ WriteMakefile(
     'YAML::XS'         => '0.62',
     'Cpanel::JSON::XS' => '3.0213',
     'Hash::Merge'      => '0.200',
+    'Scalar::Util'     => '0',
     'Carp'             => '0',
   },
   CONFIGURE_REQUIRES => {
