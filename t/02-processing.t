@@ -852,27 +852,27 @@ sub t_directive_processing_off {
       },
 
       param4_A => {
-        underlay  => { var => 'moo.param4' },
+        underlay => { var => 'moo.param4' },
         param4_1 => 'moo:val4_A_1',
         param4_2 => 'moo:val4_A_2',
         param4_5 => 'moo:val4_A_5',
       },
 
       param4_B => {
-        underlay  => { var => 'moo.param4' },
+        underlay => { var => 'moo.param4' },
         param4_3 => 'moo:val4_B_3',
         param4_4 => 'moo:val4_B_4',
         param4_5 => 'moo:val4_B_5',
       },
 
       param4_C => {
-        underlay  => { var => 'moo.param4_A' },
+        underlay => { var => 'moo.param4_A' },
         param4_1 => 'moo:val4_C_1',
         param4_6 => 'moo:val4_C_6',
       },
 
       param4_D => {
-        underlay  => { var => 'moo.param4_B' },
+        underlay => { var => 'moo.param4_B' },
         param4_3 => 'moo:val4_D_3',
         param4_6 => 'moo:val4_D_6',
       },
@@ -881,20 +881,20 @@ sub t_directive_processing_off {
         param4_1 => 'moo:val4_E_1',
         param4_2 => 'moo:val4_E_2',
         param4_5 => 'moo:val4_E_5',
-        overlay   => { var => 'moo.param4' },
+        overlay  => { var => 'moo.param4' },
       },
 
       param4_F => {
         param4_3 => 'moo:val4_F_3',
         param4_4 => 'moo:val4_F_4',
         param4_5 => 'moo:val4_F_5',
-        overlay   => { var => 'moo.param4' },
+        overlay  => { var => 'moo.param4' },
       },
 
       param4_G => {
         param4_1 => 'moo:val4_G_1',
         param4_6 => 'moo:val4_G_6',
-        overlay   => { var => 'moo.param4_E' },
+        overlay  => { var => 'moo.param4_E' },
       },
 
       param4_H => {
@@ -934,7 +934,7 @@ sub t_directive_processing_off {
       },
 
       param6_C => {
-        underlay  => [
+        underlay => [
           'moo:val6_C_1',
           'moo:val6_C_2',
         ],
@@ -945,14 +945,14 @@ sub t_directive_processing_off {
        param6_D => {
         param6_1 => 'moo:val6_D_1',
         param6_2 => 'moo:val6_D_2',
-        overlay   => [
+        overlay  => [
           'moo:val6_D_1',
           'moo:val6_D_2',
         ],
       },
 
       param6_E => {
-        underlay  => 'moo:val6_E_3',
+        underlay => 'moo:val6_E_3',
         param6_1 => 'moo:val6_E_1',
         param6_2 => 'moo:val6_E_2',
       },
@@ -960,7 +960,7 @@ sub t_directive_processing_off {
       param6_F => {
         param6_1 => 'moo:val6_F_1',
         param6_2 => 'moo:val6_F_2',
-        overlay   => 'moo:val6_F_3',
+        overlay  => 'moo:val6_F_3',
       },
     },
   };
