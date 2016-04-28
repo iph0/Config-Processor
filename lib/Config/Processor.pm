@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.03_02';
+our $VERSION = '0.04';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -336,8 +336,10 @@ features
     dirs => [ qw( /etc/myapp /home/username/etc/myapp ) ],
   );
 
-  my $config = $config_processor->load(
-    qw( dirs.yml db.json metrics/* ),
+  my $config = $config_processor->load( qw( dirs.yml db.json metrics/* ) );
+
+  my $another_config = $config_processor->load(
+    qw( dirs.yml db.json redis.yml mongodb.json metrics/* ),
 
     { myapp => {
         db => {
@@ -368,7 +370,7 @@ F<.yaml>, F<.jsn>, F<.json>.
     dirs => [ qw( /etc/myapp /home/username/etc/myapp ) ],
   );
 
-  $config_processor = Config::Processor->new(
+  my $another_config_processor = Config::Processor->new(
     dirs                  => [ qw( /etc/myapp /home/username/myapp/etc ) ],
     interpolate_variables => 0,
     process_directives    => 0,
