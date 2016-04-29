@@ -22,8 +22,7 @@ sub t_missing_extension {
 
   like(
     exception { $config_processor->load( qw( foo ) ) },
-    qr/^File extension not specified\. Don't known how parse t\/etc\/foo/,
-    'missing extension'
+    qr/^File extension not specified\./, 'missing extension'
   );
 
   return;
@@ -34,8 +33,7 @@ sub t_unknown_extension {
 
   like(
     exception { $config_processor->load( qw( foo.xml ) ) },
-    qr/^Unknown file extension "\.xml" encountered\. Don't known how parse t\/etc\/foo\.xml/,
-    'unknown extension'
+    qr/^Unknown file extension "\.xml" encountered\./, 'unknown extension'
   );
 
   return;
@@ -59,14 +57,12 @@ sub t_cant_parse_file {
 
   like(
     exception { my $c = $config_processor->load( qw( invalid.yml ) ) },
-    qr/^Can't parse t\/etc\/invalid\.yml/,
-    "can't parse file; YAML"
+    qr/^Can't parse/, "can't parse file; YAML"
   );
 
   like(
     exception { my $c = $config_processor->load( qw( invalid.json ) ) },
-    qr/^Can't parse t\/etc\/invalid\.json/,
-    "can't parse file; JSON"
+    qr/^Can't parse/, "can't parse file; JSON"
   );
 
   return;
