@@ -1,5 +1,8 @@
 Revision history for Perl extension Config::Processor.
 
+0.08 Fri Apr 29 11:11:42 MSK 2016
+  - Fixed unit tests. Do not passed tests on Windows platform.
+
 0.06 Thu Apr 28 20:51:52 MSK 2016
   - Minor changes in POD
 
