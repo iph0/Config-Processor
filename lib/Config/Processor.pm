@@ -48,7 +48,9 @@ sub new {
 
   my $self = bless {}, $self_class;
 
-  $self->{dirs} = $params{dirs} || ['.'];
+  $self->{dirs} = $params{dirs} || [];
+  push( @{ $params{dirs} }, '.' );
+
   $self->{interpolate_variables} = exists $params{interpolate_variables}
       ? $params{interpolate_variables} : 1;
   $self->{process_directives} = exists $params{process_directives}
@@ -470,8 +472,9 @@ After merging of two files we will get:
 
 =head1 INTERPOLATION
 
-Config::Processor can interpolate variables in string values. For example, we
-have F<myapp.yml> file:
+Config::Processor can interpolate variables in string values (if you need alias
+for complex sctructures see C<var> directive). For example, we have
+F<myapp.yml> file:
 
   myapp:
     media_formats: [ "images", "audio", "video" ]
