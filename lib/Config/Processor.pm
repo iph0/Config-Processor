@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.10';
+our $VERSION = '0.11_01';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -651,14 +651,14 @@ configuration parameters.
           host:     "stat-master.mydb.com"
           username: "stat_writer"
           password: "stat_writer_pass"
-          overlay: { var: myapp.db.connectors.test }
+          overlay:  { var: myapp.db.connectors.test }
 
         stat_slave:
           underlay: { var: myapp.db.connectors.default }
           host:     "stat-slave.mydb.com"
           username: "stat_reader"
           password: "stat_reader_pass"
-          overlay: { var: myapp.db.connectors.test }
+          overlay:  { var: myapp.db.connectors.test }
 
 To disable overriding just assign to C<test> connector empty hash.
 
