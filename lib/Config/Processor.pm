@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.09_01';
+our $VERSION = '0.10';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -473,7 +473,7 @@ After merging of two files we will get:
 =head1 INTERPOLATION
 
 Config::Processor can interpolate variables in string values (if you need alias
-for complex sctructures see C<var> directive). For example, we have
+for complex structures see C<var> directive). For example, we have
 F<myapp.yml> file:
 
   myapp:
