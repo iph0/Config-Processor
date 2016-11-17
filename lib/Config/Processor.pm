@@ -43,10 +43,10 @@ Hash::Merge::specify_behavior(
 
 
 sub new {
-  my $self_class = shift;
-  my %params     = @_;
+  my $class  = shift;
+  my %params = @_;
 
-  my $self = bless {}, $self_class;
+  my $self = bless {}, $class;
 
   $self->{dirs} = $params{dirs} || [];
   push( @{ $params{dirs} }, '.' );
