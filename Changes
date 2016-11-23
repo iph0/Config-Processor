@@ -1,5 +1,9 @@
 Revision history for Perl extension Config::Processor.
 
+0.11 Wen Nov 23 12:30:00 MSK 2016
+  - Decrease dependencies versions.
+  - Cosmetic changes
+
 0.10 Tue Jun 21 11:00:00 MSK 2016
   - Now module will always try to search configuration files in current
     directory.

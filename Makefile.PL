@@ -6,8 +6,8 @@ WriteMakefile(
   VERSION_FROM       => 'lib/Config/Processor.pm',
   PREREQ_PM          => {
     'File::Spec'       => '0',
-    'YAML::XS'         => '0.62',
-    'Cpanel::JSON::XS' => '3.0213',
+    'YAML::XS'         => '0.41',
+    'Cpanel::JSON::XS' => '3.0104',
     'Hash::Merge'      => '0.200',
     'Scalar::Util'     => '0',
     'Carp'             => '0',
