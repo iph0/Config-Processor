@@ -1,5 +1,8 @@
 Revision history for Perl extension Config::Processor.
 
+0.12 Thu Nov 24 11:36:40 MSK 2016
+  - Decreased version of required modules YAML::XS and Cpanel::JSON::XS.
+
 0.10 Tue Jun 21 11:00:00 MSK 2016
   - Now module will always try to search configuration files in current
     directory.
