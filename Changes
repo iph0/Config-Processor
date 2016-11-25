@@ -1,5 +1,8 @@
 Revision history for Perl extension Config::Processor.
 
+0.14 Thu Nov 25 16:34:45 MSK 2016
+  - BUGFIX: Fixed assignment of default list of configuration directories.
+
 0.12 Thu Nov 24 11:36:40 MSK 2016
   - Decreased version of required modules YAML::XS and Cpanel::JSON::XS.
 
@@ -16,7 +19,7 @@ Revision history for Perl extension Config::Processor.
 
 0.04 Thu Apr 28 14:39:38 MSK 2016
   - Data::Rmap was replaced by own function.
-  - Fixed wrong behavior during processing of directives.
+  - BUGFIX: Fixed wrong behavior during processing of directives.
   - Improved logic of tree traversal.
   - Improved logic of variable resolving.
 

@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.12';
+our $VERSION = '0.14';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -49,7 +49,9 @@ sub new {
   my $self = bless {}, $class;
 
   $self->{dirs} = $params{dirs} || [];
-  push( @{ $params{dirs} }, '.' );
+  unless ( @{ $self->{dirs} } ) {
+    push( @{ $self->{dirs} }, '.' );
+  }
 
   $self->{interpolate_variables} = exists $params{interpolate_variables}
       ? $params{interpolate_variables} : 1;
@@ -71,7 +73,7 @@ sub new {
     *{$name} = sub {
       my $self = shift;
 
-      if ( @_ ) {
+      if (@_) {
         $self->{$name} = shift;
       }
 
