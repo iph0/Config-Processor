@@ -398,15 +398,18 @@ the parameter not specified, current directory will be used.
 
 =item interpolate_variables => $boolean
 
-Enables or disables variable interpolation. Enabled by default.
+Enables or disables variable interpolation in configurations files.
+Enabled by default.
 
 =item process_directives => $boolean
 
-Enables or disables directive processing. Enabled by default.
+Enables or disables directive processing in configurations files.
+Enabled by default.
 
 =item export_env
 
-TODO
+Enables or disables environment variables exporting to configuration tree.
+Disabled by default.
 
 =back
 
@@ -430,6 +433,10 @@ Enables or disables variable interpolation in configurations files.
 =head2 process_directives( [ $boolean ] )
 
 Enables or disables directive processing in configuration files.
+
+=head2 export_env( [ $boolean ] )
+
+Enables or disables environment variables exporting to configuration tree.
 
 =head1 MERGING RULES
 
