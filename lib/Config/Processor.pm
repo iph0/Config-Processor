@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.15_01';
+our $VERSION = '0.16';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -344,10 +344,10 @@ features
   use Config::Processor;
 
   my $config_processor = Config::Processor->new(
-    dirs => [ qw( /etc/myapp /home/username/etc/myapp ) ],
+    dirs => [qw( /etc/myapp /home/username/etc/myapp )]
   );
 
-  my $config = $config_processor->load( qw( dirs.yml db.json metrics/* ) );
+  my $config = $config_processor->load(qw( dirs.yml db.json metrics/* ));
 
   $config = $config_processor->load(
     qw( dirs.yml db.json redis.yml mongodb.json metrics/* ),
@@ -378,13 +378,14 @@ F<.yaml>, F<.jsn>, F<.json>.
 =head2 new( %params )
 
   my $config_processor = Config::Processor->new(
-    dirs => [ qw( /etc/myapp /home/username/etc/myapp ) ],
+    dirs       => [qw( /etc/myapp /home/username/etc/myapp )],
+    export_env => 1,
   );
 
-  $config_processor = Config::Processor->new();
+  $config_processor = Config::Processor->new;
 
   $config_processor = Config::Processor->new(
-    dirs                  => [ qw( /etc/myapp /home/username/etc/myapp ) ],
+    dirs                  => [qw( /etc/myapp /home/username/etc/myapp )],
     interpolate_variables => 0,
     process_directives    => 0,
   );
@@ -406,11 +407,11 @@ Enabled by default.
 Enables or disables directive processing in configurations files.
 Enabled by default.
 
-=item export_env
+=item export_env => $boolean
 
 Enables or disables environment variables exporting to configuration tree.
 If enabled, environment variables can be accessed by the key C<ENV> from the
-tree and can be interpolated in other configuration parameters.
+configuration tree and can be interpolated into other configuration parameters.
 
 Disabled by default.
 

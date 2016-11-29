@@ -1,6 +1,9 @@
 Revision history for Perl extension Config::Processor.
 
-0.14 Thu Nov 25 16:34:45 MSK 2016
+0.16 Tue Nov 29 17:14:05 MSK 2016
+  - FEATURE: Added export of environment variables to configuration tree.
+
+0.14 Fri Nov 25 16:34:45 MSK 2016
   - BUGFIX: Fixed assignment of default list of configuration directories.
 
 0.12 Thu Nov 24 11:36:40 MSK 2016
