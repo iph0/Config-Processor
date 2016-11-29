@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.14';
+our $VERSION = '0.15_01';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -57,8 +57,9 @@ sub new {
       ? $params{interpolate_variables} : 1;
   $self->{process_directives} = exists $params{process_directives}
       ? $params{process_directives} : 1;
+  $self->{export_env} = $params{export_env};
 
-  $self->{_hash_merge} = Hash::Merge->new( 'CONFIG_PRECEDENT' );
+  $self->{_merger} = Hash::Merge->new('CONFIG_PRECEDENT');
   $self->{_config}     = undef;
   $self->{_vars}       = {};
   $self->{_seen_nodes} = {};
@@ -69,7 +70,9 @@ sub new {
 {
   no strict 'refs';
 
-  foreach my $name ( qw( interpolate_variables process_directives ) ) {
+  foreach my $name (
+      qw( interpolate_variables process_directives export_env ) )
+  {
     *{$name} = sub {
       my $self = shift;
 
@@ -83,10 +86,14 @@ sub new {
 }
 
 sub load {
-  my $self            = shift;
+  my $self = shift;
   my @config_sections = @_;
 
   $self->{_config} = $self->_build_tree(@config_sections);
+  if ( $self->{export_env} ) {
+    $self->{_config} = $self->{_merger}->merge( $self->{_config},
+        { ENV => {%ENV} } );
+  }
   $self->_process_tree( $self->{_config} );
 
   $self->{_vars}       = {};
@@ -96,7 +103,7 @@ sub load {
 }
 
 sub _build_tree {
-  my $self            = shift;
+  my $self = shift;
   my @config_sections = @_;
 
   my $config = {};
@@ -105,7 +112,7 @@ sub _build_tree {
     next unless defined $config_section;
 
     if ( ref($config_section) eq 'HASH' ) {
-      $config = $self->{_hash_merge}->merge( $config, $config_section );
+      $config = $self->{_merger}->merge( $config, $config_section );
     }
     else {
       my %not_found_idx;
@@ -138,8 +145,8 @@ sub _build_tree {
               next;
             }
 
-            my $method = "_load_${file_type}_file";
             my @data = eval {
+              my $method = "_load_$file_type";
               return $self->$method($file_path);
             };
             if ($@) {
@@ -147,7 +154,7 @@ sub _build_tree {
             }
 
             foreach my $data_chunk (@data) {
-              $config = $self->{_hash_merge}->merge( $config, $data_chunk );
+              $config = $self->{_merger}->merge( $config, $data_chunk );
             }
           }
         }
@@ -167,14 +174,14 @@ sub _build_tree {
   return $config;
 }
 
-sub _load_yaml_file {
+sub _load_yaml {
   my $self      = shift;
   my $file_path = shift;
 
   return LoadFile($file_path);
 }
 
-sub _load_json_file {
+sub _load_json {
   my $self      = shift;
   my $file_path = shift;
 
@@ -231,13 +238,13 @@ sub _process_node {
       if ( defined $node->{underlay} ) {
         my $layer = delete $node->{underlay};
         $layer = $self->_process_layer($layer);
-        $node = $self->{_hash_merge}->merge( $layer, $node );
+        $node = $self->{_merger}->merge( $layer, $node );
       }
 
       if ( defined $node->{overlay} ) {
         my $layer = delete $node->{overlay};
         $layer = $self->_process_layer($layer);
-        $node = $self->{_hash_merge}->merge( $node, $layer );
+        $node = $self->{_merger}->merge( $node, $layer );
       }
     }
   }
@@ -257,7 +264,7 @@ sub _process_layer {
 
     foreach my $node ( @{$layer} ) {
       $node = $self->_process_node( $node );
-      $new_layer = $self->{_hash_merge}->merge( $new_layer, $node );
+      $new_layer = $self->{_merger}->merge( $new_layer, $node );
     }
 
     $layer = $new_layer;
@@ -278,7 +285,7 @@ sub _resolve_var {
 
     my $value;
 
-    while ( 1 ) {
+    while (1) {
       my $token = shift @tokens;
 
       if ( ref($pointer) eq 'HASH' ) {
@@ -396,6 +403,10 @@ Enables or disables variable interpolation. Enabled by default.
 =item process_directives => $boolean
 
 Enables or disables directive processing. Enabled by default.
+
+=item export_env
+
+TODO
 
 =back
 

@@ -3,6 +3,7 @@ myapp:
 
   dirs:
     root_dir: "/myapp"
+    home_dir: "${ENV.HOME}"
     templates_dir: "${myapp.dirs.root_dir}/templates"
     sessions_dir: "${myapp.dirs.root_dir}/sessions"
     media_dirs:

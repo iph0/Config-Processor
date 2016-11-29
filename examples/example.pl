@@ -8,6 +8,7 @@ use Data::Dumper;
 
 my $config_processor = Config::Processor->new(
   dirs => [ qw( examples/etc ) ],
+  export_env => 1,
 );
 
 # Load all configuration sections
