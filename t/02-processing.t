@@ -2,7 +2,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-use Test::More tests => 9;
+use Test::More tests => 10;
 use Config::Processor;
 
 my $CONFIG_PROCESSOR = Config::Processor->new(
@@ -14,15 +14,12 @@ can_ok( $CONFIG_PROCESSOR, 'load' );
 t_merging_yaml($CONFIG_PROCESSOR);
 t_merging_json($CONFIG_PROCESSOR);
 t_merging_mixed($CONFIG_PROCESSOR);
-
 t_variable_interpolation_on($CONFIG_PROCESSOR);
 t_variable_interpolation_off();
-
 t_directive_processing_on($CONFIG_PROCESSOR);
 t_directive_processing_off();
-
 t_complete_processing($CONFIG_PROCESSOR);
-
+t_env_exporting($CONFIG_PROCESSOR);
 
 sub t_merging_yaml {
   my $config_processor = shift;
@@ -1367,6 +1364,17 @@ sub t_complete_processing {
   };
 
   is_deeply( $t_config, $e_config, 'complete processing' );
+
+  return;
+}
+
+sub t_env_exporting {
+  my $config_processor = shift;
+
+  $config_processor->export_env(1);
+  my $t_config = $config_processor->load( qw( foo_A.yaml foo_B.yml ) );
+
+  ok( ref( $t_config->{ENV} ) eq 'HASH' , 'environment variables exporting' );
 
   return;
 }
