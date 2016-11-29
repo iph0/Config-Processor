@@ -409,6 +409,9 @@ Enabled by default.
 =item export_env
 
 Enables or disables environment variables exporting to configuration tree.
+If enabled, environment variables can be accessed by the key C<ENV> from the
+tree and can be interpolated in other configuration parameters.
+
 Disabled by default.
 
 =back
