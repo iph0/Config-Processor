@@ -7,7 +7,7 @@ use Config::Processor;
 use Data::Dumper;
 
 my $config_processor = Config::Processor->new(
-  dirs => [ qw( examples/etc ) ],
+  dirs       => [qw( examples/etc )],
   export_env => 1,
 );
 
