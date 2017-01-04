@@ -1,5 +1,8 @@
 Revision history for Perl extension Config::Processor.
 
+0.18 Wed Jan 4 18:02:45 MSK 2017
+  - Leading and trailing spaces now removes from variable names.
+
 0.16 Tue Nov 29 17:14:05 MSK 2016
   - FEATURE: Added export of environment variables to configuration tree.
 

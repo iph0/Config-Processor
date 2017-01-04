@@ -444,12 +444,12 @@ sub t_variable_interpolation_off {
 
     jar => {
       param1 => 'jar:${foo.param1}',
-      param2 => 'jar:${foo.param2}; jar:${bar.param2}',
+      param2 => 'jar:${foo.param2}; jar:${ bar.param2 }',
 
       param3 => {
         param3_1 => 'jar:${foo.param3.param3_1};'
             . ' jar:${bar.param3.param3_3}',
-        param3_2 => 'jar:${foo.param3.param3_3};'
+        param3_2 => 'jar:${ foo.param3 . param3_3 };'
             . ' jar:${bar.param3.param3_1}',
       },
 

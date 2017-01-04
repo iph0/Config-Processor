@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.16';
+our $VERSION = '0.18';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -287,6 +287,8 @@ sub _resolve_var {
 
     while (1) {
       my $token = shift @tokens;
+      $token =~ s/^\s+//;
+      $token =~ s/\s+$//;
 
       if ( ref($pointer) eq 'HASH' ) {
         last unless defined $pointer->{$token};
