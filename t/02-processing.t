@@ -605,6 +605,8 @@ sub t_directive_processing_on {
         param4_2 => 'moo:val4_2',
         param4_3 => 'moo:val4_3',
         param4_4 => 'moo:val4_4',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_A => {
@@ -613,6 +615,8 @@ sub t_directive_processing_on {
         param4_3 => 'moo:val4_3',
         param4_4 => 'moo:val4_4',
         param4_5 => 'moo:val4_A_5',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_B => {
@@ -621,6 +625,8 @@ sub t_directive_processing_on {
         param4_3 => 'moo:val4_B_3',
         param4_4 => 'moo:val4_B_4',
         param4_5 => 'moo:val4_B_5',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_C => {
@@ -630,6 +636,8 @@ sub t_directive_processing_on {
         param4_4 => 'moo:val4_4',
         param4_5 => 'moo:val4_A_5',
         param4_6 => 'moo:val4_C_6',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_D => {
@@ -639,6 +647,8 @@ sub t_directive_processing_on {
         param4_4 => 'moo:val4_B_4',
         param4_5 => 'moo:val4_B_5',
         param4_6 => 'moo:val4_D_6',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_E => {
@@ -647,6 +657,8 @@ sub t_directive_processing_on {
         param4_3 => 'moo:val4_3',
         param4_4 => 'moo:val4_4',
         param4_5 => 'moo:val4_E_5',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_F => {
@@ -655,6 +667,8 @@ sub t_directive_processing_on {
         param4_3 => 'moo:val4_3',
         param4_4 => 'moo:val4_4',
         param4_5 => 'moo:val4_F_5',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_G => {
@@ -664,6 +678,8 @@ sub t_directive_processing_on {
         param4_4 => 'moo:val4_4',
         param4_5 => 'moo:val4_E_5',
         param4_6 => 'moo:val4_G_6',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_H => {
@@ -673,6 +689,8 @@ sub t_directive_processing_on {
         param4_4 => 'moo:val4_4',
         param4_5 => 'moo:val4_F_5',
         param4_6 => 'moo:val4_H_6',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param5 => {
@@ -846,6 +864,8 @@ sub t_directive_processing_off {
         param4_2 => 'moo:val4_2',
         param4_3 => 'moo:val4_3',
         param4_4 => 'moo:val4_4',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_A => {
@@ -1131,6 +1151,8 @@ sub t_complete_processing {
         param4_2 => 'moo:val4_2',
         param4_3 => 'moo:val4_3',
         param4_4 => 'moo:val4_4',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_A => {
@@ -1139,6 +1161,8 @@ sub t_complete_processing {
         param4_3 => 'moo:val4_3',
         param4_4 => 'moo:val4_4',
         param4_5 => 'moo:val4_A_5',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_B => {
@@ -1147,6 +1171,8 @@ sub t_complete_processing {
         param4_3 => 'moo:val4_B_3',
         param4_4 => 'moo:val4_B_4',
         param4_5 => 'moo:val4_B_5',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_C => {
@@ -1156,6 +1182,8 @@ sub t_complete_processing {
         param4_4 => 'moo:val4_4',
         param4_5 => 'moo:val4_A_5',
         param4_6 => 'moo:val4_C_6',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_D => {
@@ -1165,6 +1193,8 @@ sub t_complete_processing {
         param4_4 => 'moo:val4_B_4',
         param4_5 => 'moo:val4_B_5',
         param4_6 => 'moo:val4_D_6',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_E => {
@@ -1173,6 +1203,8 @@ sub t_complete_processing {
         param4_3 => 'moo:val4_3',
         param4_4 => 'moo:val4_4',
         param4_5 => 'moo:val4_E_5',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_F => {
@@ -1181,6 +1213,8 @@ sub t_complete_processing {
         param4_3 => 'moo:val4_3',
         param4_4 => 'moo:val4_4',
         param4_5 => 'moo:val4_F_5',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_G => {
@@ -1190,6 +1224,8 @@ sub t_complete_processing {
         param4_4 => 'moo:val4_4',
         param4_5 => 'moo:val4_E_5',
         param4_6 => 'moo:val4_G_6',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param4_H => {
@@ -1199,6 +1235,8 @@ sub t_complete_processing {
         param4_4 => 'moo:val4_4',
         param4_5 => 'moo:val4_F_5',
         param4_6 => 'moo:val4_H_6',
+        param4_7 => 1,
+        param4_8 => '',
       },
 
       param5 => {
@@ -1301,6 +1339,8 @@ sub t_complete_processing {
         param4_3 => 'moo:val4_3',
         param4_4 => 'moo:val4_4',
         param4_5 => 'moo:val4_A_5',
+        param4_7 => 1,
+        param4_8 => '',
 
         param5_1 => {
           param5_1_1 => 'moo_A:val5_1_1',

@@ -11,6 +11,8 @@ moo:
     param4_2: "moo:val4_2"
     param4_3: "moo:val4_3"
     param4_4: "moo:val4_4"
+    param4_7: true
+    param4_8: false
 
   param4_A:
     underlay:  { var: moo.param4 }

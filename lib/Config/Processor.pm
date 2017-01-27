@@ -4,13 +4,13 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.18';
+our $VERSION = '0.19_01';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
 use Cpanel::JSON::XS;
 use Hash::Merge;
-use Scalar::Util qw( refaddr );
+use Scalar::Util qw( refaddr readonly );
 use Carp qw( croak );
 
 my %FILE_EXTENSIONS_MAP = (
@@ -194,6 +194,8 @@ sub _load_json {
 
 sub _process_tree {
   my $self = shift;
+
+  return if readonly( $_[0] );
 
   $_[0] = $self->_process_node( $_[0] );
 
