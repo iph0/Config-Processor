@@ -1,5 +1,9 @@
 Revision history for Perl extension Config::Processor.
 
+0.20 Sat Jan 28 15:50:37 MSK 2017
+  - Fixed the bug of the modification of a read-only value. Thanks to Andrey
+    Kuzmin.
+
 0.18 Wed Jan 4 18:02:45 MSK 2017
   - Leading and trailing spaces now removes from variable names.
 
