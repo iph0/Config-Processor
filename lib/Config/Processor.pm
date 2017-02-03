@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.20';
+our $VERSION = '0.21_01';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -94,7 +94,7 @@ sub load {
     $self->{_config} = $self->{_merger}->merge( $self->{_config},
         { ENV => {%ENV} } );
   }
-  $self->_process_tree( $self->{_config} );
+  $self->_process_tree( $self->{_config}, [] );
 
   $self->{_vars}       = {};
   $self->{_seen_nodes} = {};
@@ -194,10 +194,11 @@ sub _load_json {
 
 sub _process_tree {
   my $self = shift;
+  my $ancs = pop;
 
   return if readonly( $_[0] );
 
-  $_[0] = $self->_process_node( $_[0] );
+  $_[0] = $self->_process_node( $_[0], $ancs );
 
   if ( my $node_addr = refaddr( $_[0] ) ) {
     return if $self->{_seen_nodes}{$node_addr};
@@ -207,12 +208,12 @@ sub _process_tree {
 
   if ( ref( $_[0] ) eq 'HASH' ) {
     foreach ( values %{ $_[0] } ) {
-      $self->_process_tree($_);
+      $self->_process_tree( $_, [ $_[0], @{$ancs} ] );
     }
   }
   elsif ( ref( $_[0] ) eq 'ARRAY' ) {
     foreach ( @{ $_[0] } ) {
-      $self->_process_tree($_);
+      $self->_process_tree( $_, [ $_[0], @{$ancs} ] );
     }
   }
 
@@ -222,16 +223,17 @@ sub _process_tree {
 sub _process_node {
   my $self = shift;
   my $node = shift;
+  my $ancs = shift;
 
   return unless defined $node;
 
   if ( !ref($node) && $self->{interpolate_variables} ) {
     $node =~ s/\$((\$?)\{([^\}]*)\})/
-        $2 ? $1 : ( $self->_resolve_var( $3 ) || '' )/ge;
+        $2 ? $1 : ( $self->_resolve_var( $3, $ancs ) || '' )/ge;
   }
   elsif ( ref($node) eq 'HASH' && $self->{process_directives} ) {
     if ( defined $node->{var} ) {
-      $node = $self->_resolve_var( $node->{var} );
+      $node = $self->_resolve_var( $node->{var}, $ancs );
     }
     elsif ( defined $node->{include} ) {
       $node = $self->_build_tree( $node->{include} );
@@ -239,13 +241,13 @@ sub _process_node {
     else {
       if ( defined $node->{underlay} ) {
         my $layer = delete $node->{underlay};
-        $layer = $self->_process_layer($layer);
+        $layer = $self->_process_layer( $layer, $ancs );
         $node = $self->{_merger}->merge( $layer, $node );
       }
 
       if ( defined $node->{overlay} ) {
         my $layer = delete $node->{overlay};
-        $layer = $self->_process_layer($layer);
+        $layer = $self->_process_layer( $layer, $ancs );
         $node = $self->{_merger}->merge( $node, $layer );
       }
     }
@@ -257,15 +259,16 @@ sub _process_node {
 sub _process_layer {
   my $self  = shift;
   my $layer = shift;
+  my $ancs  = shift;
 
   if ( ref($layer) eq 'HASH' ) {
-    $layer = $self->_process_node( $layer );
+    $layer = $self->_process_node( $layer, $ancs );
   }
   elsif ( ref($layer) eq 'ARRAY' ) {
     my $new_layer = {};
 
     foreach my $node ( @{$layer} ) {
-      $node = $self->_process_node( $node );
+      $node = $self->_process_node( $node, $ancs );
       $new_layer = $self->{_merger}->merge( $new_layer, $node );
     }
 
@@ -276,63 +279,113 @@ sub _process_layer {
 }
 
 sub _resolve_var {
-  my $self     = shift;
-  my $var_name = shift;
+  my $self = shift;
+  my $name = shift;
+  my $ancs = shift;
 
-  my $vars = $self->{_vars};
-
-  unless ( defined $vars->{$var_name} ) {
-    my @tokens = split( /\./, $var_name );
-    my $pointer = $self->{_config};
-
-    my $value;
+  if ( $name =~ m/^\./ ) {
+    my @tokens    = split( /\./, $name );
+    my $anc_index = -1;
 
     while (1) {
-      my $token = shift @tokens;
+      my $token = $tokens[0];
       $token =~ s/^\s+//;
       $token =~ s/\s+$//;
 
-      if ( ref($pointer) eq 'HASH' ) {
-        last unless defined $pointer->{$token};
+      last if length($token) > 0;
 
-        if ( !@tokens ) {
-          $value = $self->_process_node( $pointer->{$token} );
-          $pointer->{$token} = $value;
-
-          last;
-        }
-
-        last unless ref( $pointer->{$token} );
-
-        $pointer = $pointer->{$token};
-      }
-      else { # ARRAY
-        if ( $token =~ m/\D/ ) {
-          die "Argument \"$token\" isn't numeric in array element:"
-              . " $var_name\n";
-        }
-
-        last unless defined $pointer->[$token];
-
-        if ( !@tokens ) {
-          $value = $self->_process_node( $pointer->[$token] );
-          $pointer->[$token] = $value;
-
-          last;
-        }
-
-        last unless ref( $pointer->[$token] );
-
-        $pointer = $pointer->[$token];
-      }
+      shift @tokens;
+      $anc_index++;
     }
 
-    if ( defined $value ) {
-      $vars->{$var_name} = $value;
+    my $node = $ancs->[$anc_index];
+
+    my $value = eval {
+      $self->_fetch_value( $node, \@tokens, $ancs );
+    };
+
+    if ($@) {
+      chomp $@;
+      die qq{Can't resolve variable "$name"; $@\n};
+    }
+
+    return $value;
+  }
+
+  my $vars = $self->{_vars};
+
+  unless ( defined $vars->{$name} ) {
+    my @tokens = split( /\./, $name );
+
+    my $value = eval {
+      $self->_fetch_value( $self->{_config}, \@tokens, $ancs );
+    };
+
+    if ($@) {
+      chomp $@;
+      die qq{Can't resolve variable "$name"; $@\n};
+    }
+
+    $vars->{$name} = $value;
+  }
+
+  return $vars->{$name};
+}
+
+####
+sub _fetch_value {
+  my $self   = shift;
+  my $node   = shift;
+  my $tokens = shift;
+  my $ancs   = shift;
+
+  my $value;
+  my @anc_stack = @{$ancs};
+
+  while (1) {
+    my $token = shift @{$tokens};
+    $token =~ s/^\s+//;
+    $token =~ s/\s+$//;
+
+    if ( ref($node) eq 'HASH' ) {
+      last unless defined $node->{$token};
+
+      unshift( @anc_stack, $node );
+
+      unless ( @{$tokens} ) {
+        $value = $self->_process_node( $node->{$token}, \@anc_stack );
+        $node->{$token} = $value;
+
+        last;
+      }
+
+      last unless ref( $node->{$token} );
+
+      $node = $node->{$token};
+    }
+    else { # ARRAY
+      if ( $token =~ m/\D/ ) {
+        die qq{Argument "$token" isn't numeric in array element.\n};
+      }
+
+      last unless defined $node->[$token];
+
+      unshift( @anc_stack, $node );
+
+      unless ( @{$tokens} ) {
+        $value = $self->_process_node( $node->[$token], \@anc_stack );
+        $node->[$token] = $value;
+
+        last;
+      }
+
+      last unless ref( $node->[$token] );
+
+      $node = $node->[$token];
     }
   }
 
-  return $vars->{$var_name};
+  return $value;
 }
 
 1;

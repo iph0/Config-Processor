@@ -80,7 +80,7 @@ sub t_invalid_array_element_index {
         }
       );
     },
-    qr/^Argument \"param4_1\" isn't numeric in array element: foo\.param4\.param4_1/,
+    qr/^Can't resolve variable "foo\.param4\.param4_1";/,
     'invalid array element index'
   );
 

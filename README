@@ -1,4 +1,4 @@
-Config-Processor version 0.20
+Config-Processor version 0.21_01
 =============================
 
 INSTALLATION
@@ -24,7 +24,7 @@ Eugene Ponizovsky, <ponizovsky@gmail.com>
 
 COPYRIGHT AND LICENSE
 
-Copyright (c) 2016, Eugene Ponizovsky, <ponizovsky@gmail.com>.
+Copyright (c) 2016-2017, Eugene Ponizovsky, <ponizovsky@gmail.com>.
 All rights reserved.
 
 This module is free software; you can redistribute it and/or modify it under
