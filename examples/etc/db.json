@@ -7,24 +7,33 @@
         ],
 
         "stat_master": {
-          "underlay": { "var": "myapp.db.connectors.default" },
+          "underlay": { "var": ".default" },
+          "dsn":      "dbi:Pg:dbname=${.dbname};host=${.host};port=${.port}",
           "host":     "stat-master.mydb.com",
           "username": "stat_writer",
           "password": "stat_writer_pass"
         },
 
         "stat_slave": {
-          "underlay": { "var": "myapp.db.connectors.default" },
+          "underlay": { "var": ".default" },
+          "dsn":      "dbi:Pg:dbname=${.dbname};host=${.host};port=${.port}",
           "host":     "stat-slave.mydb.com",
           "username": "stat_reader",
           "password": "stat_reader_pass"
         },
 
         "test": {
-          "underlay": { "var": "myapp.db.connectors.default_test" },
+          "underlay": { "var": ".default_test" },
+          "dsn":      "dbi:Pg:dbname=${.dbname};host=${.host};port=${.port}",
           "username": "test",
           "password": "test_pass"
         }
+      },
+
+      "default_options": {
+        "PrintWarn":  "0",
+        "PrintError": "0",
+        "RaiseError": "1"
       }
     }
   }

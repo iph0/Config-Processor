@@ -1,8 +1,7 @@
 default:
-  port:   "1234"
-  dbname: 'stat'
-  options:
-    PrintWarn:  0
-    PrintError: 0
-    RaiseError: 1
+  dsn:     'dbi:Pg:dbname=${.dbname};host=${.host};port=${.port}'
+  host:    'localhost'
+  port:    '1234'
+  dbname:  'stat'
+  options: { var: ...default_options }
 

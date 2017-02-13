@@ -348,6 +348,15 @@ sub t_variable_interpolation_on {
         param6_7 => 'jar:',
         param6_8 => 'jar:',
       },
+
+      param7 => {
+        param7_1 => 'jar:val7_1',
+        param7_2 => 'jar:val7_2',
+        param7_3 => 'jar:jar:val7_1; jar:jar:val7_2',
+        param7_4 => 'jar:jar:jar:val7_1; jar:jar:val7_2',
+        param7_5 => 'jar:jar:zoo:val3_1; jar:bar_B:val3_3'
+            . ' jar:jar:bar_B:val4_2; jar:foo_B:val4_1',
+      },
     },
   };
 
@@ -484,6 +493,14 @@ sub t_variable_interpolation_off {
         param6_6 => 'jar:${foo.param3X.param3_1}',
         param6_7 => 'jar:${foo.param3.param3X}',
         param6_8 => 'jar:${jar.param5.3}',
+      },
+
+      param7 => {
+        param7_1 => 'jar:val7_1',
+        param7_2 => 'jar:val7_2',
+        param7_3 => 'jar:${.param7_1}; jar:${.param7_2}',
+        param7_4 => 'jar:${.param7_3}',
+        param7_5 => 'jar:${..param3.param3_1} jar:${..param4.1}',
       }
     }
   };
@@ -1119,6 +1136,15 @@ sub t_complete_processing {
         param6_6 => 'jar:',
         param6_7 => 'jar:',
         param6_8 => 'jar:',
+      },
+
+      param7 => {
+        param7_1 => 'jar:val7_1',
+        param7_2 => 'jar:val7_2',
+        param7_3 => 'jar:jar:val7_1; jar:jar:val7_2',
+        param7_4 => 'jar:jar:jar:val7_1; jar:jar:val7_2',
+        param7_5 => 'jar:jar:zoo:val3_1; jar:bar_B:val3_3'
+            . ' jar:jar:bar_B:val4_2; jar:foo_B:val4_1',
       },
     },
 

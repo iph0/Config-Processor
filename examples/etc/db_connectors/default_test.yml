@@ -1,4 +1,5 @@
 default_test:
-  underlay: { var: myapp.db.connectors.default }
-  host: 'stat-test.mydb.com'
+  underlay: { var: .default }
+  dsn:      'dbi:Pg:dbname=${.dbname};host=${.host};port=${.port}'
+  host:     'stat-test.mydb.com'
 

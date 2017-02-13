@@ -554,20 +554,22 @@ After merging of two files we will get:
 =head1 INTERPOLATION
 
 Config::Processor can interpolate variables in string values (if you need alias
-for complex structures see C<var> directive). For example, we have
-F<myapp.yml> file:
+for complex structures see C<var> directive). Variable names can be absolute or
+relative. Relative variable names begins with dot "." The number of dots
+depends on the nesting level of the current configuration parameter relative to
+referenced configuration parameter.
 
   myapp:
     media_formats: [ "images", "audio", "video" ]
 
     dirs:
       root_dir: "/myapp"
-      templates_dir: "${myapp.dirs.root_dir}/templates"
-      sessions_dir: "${myapp.dirs.root_dir}/sessions"
+      templates_dir: "${.root_dir}/templates"
+      sessions_dir: "${.root_dir}/sessions"
       media_dirs:
-        - "${myapp.dirs.root_dir}/media/${myapp.media_formats.0}"
-        - "${myapp.dirs.root_dir}/media/${myapp.media_formats.1}"
-        - "${myapp.dirs.root_dir}/media/${myapp.media_formats.2}"
+        - "${..root_dir}/media/${myapp.media_formats.0}"
+        - "${..root_dir}/media/${myapp.media_formats.1}"
+        - "${..root_dir}/media/${myapp.media_formats.2}"
 
 After processing of the file we will get:
 
@@ -601,10 +603,14 @@ After processing we will get:
 =item var: varname
 
 Assigns configuration parameter value to another configuration parameter.
+Variable names in the directive can be absolute or relative. Relative variable
+names begins with dot ".". The number of dots depends on the nesting level of
+the current configuration parameter relative to referenced configuration
+parameter.
 
   myapp:
     db:
-      generic_options:
+      default_options:
         PrintWarn:  0
         PrintError: 0
         RaiseError: 1
@@ -616,7 +622,7 @@ Assigns configuration parameter value to another configuration parameter.
           dbname:   "stat"
           username: "stat_writer"
           password: "stat_writer_pass"
-          options: { var: myapp.db.generic_options }
+          options: { var: myapp.db.default_options }
 
         stat_slave:
           host:     "stat-slave.mydb.com"
@@ -624,7 +630,7 @@ Assigns configuration parameter value to another configuration parameter.
           dbname:   "stat"
           username: "stat_reader"
           password: "stat_reader_pass"
-          options: { var: myapp.db.generic_options }
+          options: { var: ...default_options }
 
 =item include: filename
 
@@ -665,13 +671,13 @@ For example, you can use this directive to set default values of parameters.
             RaiseError: 1
 
         stat_master:
-          underlay: { var: myapp.db.connectors.default }
+          underlay: { var: .default }
           host:     "stat-master.mydb.com"
           username: "stat_writer"
           password: "stat_writer_pass"
 
         stat_slave:
-          underlay: { var: myapp.db.connectors.default }
+          underlay: { var: .default }
           host:     "stat-slave.mydb.com"
           username: "stat_reader"
           password: "stat_reader_pass"
@@ -686,19 +692,19 @@ You can move default parameters in separate files.
           - { include: db_connectors/default_test.yml }
 
         stat_master:
-          underlay: { var: myapp.db.connectors.default }
+          underlay: { var: .default }
           host:     "stat-master.mydb.com"
           username: "stat_writer"
           password: "stat_writer_pass"
 
         stat_slave:
-          underlay: { var: myapp.db.connectors.default }
+          underlay: { var: .default }
           host:     "stat-slave.mydb.com"
           username: "stat_reader"
           password: "stat_reader_pass"
 
         test:
-          underlay: { var: myapp.db.connectors.default_test }
+          underlay: { var: .default_test }
           username: "test"
           password: "test_pass"
 
@@ -728,18 +734,18 @@ configuration parameters.
           port: "4321"
 
         stat_master:
-          underlay: { var: myapp.db.connectors.default }
+          underlay: { var: .default }
           host:     "stat-master.mydb.com"
           username: "stat_writer"
           password: "stat_writer_pass"
-          overlay:  { var: myapp.db.connectors.test }
+          overlay:  { var: .test }
 
         stat_slave:
-          underlay: { var: myapp.db.connectors.default }
+          underlay: { var: .default }
           host:     "stat-slave.mydb.com"
           username: "stat_reader"
           password: "stat_reader_pass"
-          overlay:  { var: myapp.db.connectors.test }
+          overlay:  { var: .test }
 
 To disable overriding just assign to C<test> connector empty hash.
 
