@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.21_01';
+our $VERSION = '0.21_02';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -284,7 +284,7 @@ sub _resolve_var {
   my $ancs = shift;
 
   if ( $name =~ m/^\./ ) {
-    my @tokens    = split( /\./, $name );
+    my @tokens    = split( /\./, $name, -1 );
     my $anc_index = -1;
 
     while (1) {
@@ -295,6 +295,9 @@ sub _resolve_var {
       last if length($token) > 0;
 
       shift @tokens;
+
+      last unless @tokens;
+
       $anc_index++;
     }
 
@@ -315,7 +318,7 @@ sub _resolve_var {
   my $vars = $self->{_vars};
 
   unless ( defined $vars->{$name} ) {
-    my @tokens = split( /\./, $name );
+    my @tokens = split( /\./, $name, -1 );
 
     my $value = eval {
       $self->_fetch_value( $self->{_config}, \@tokens, $ancs );
@@ -338,6 +341,10 @@ sub _fetch_value {
   my $node   = shift;
   my $tokens = shift;
   my $ancs   = shift;
+
+  unless ( @{$tokens} ) {
+    return $node;
+  }
 
   my $value;
   my @anc_stack = @{$ancs};

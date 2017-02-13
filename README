@@ -1,4 +1,4 @@
-Config-Processor version 0.21_01
+Config-Processor version 0.21_02
 =============================
 
 INSTALLATION
@@ -29,4 +29,3 @@ All rights reserved.
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
-
