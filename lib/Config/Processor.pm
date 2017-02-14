@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.21_02';
+our $VERSION = '0.21_03';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -229,11 +229,11 @@ sub _process_node {
 
   if ( !ref($node) && $self->{interpolate_variables} ) {
     $node =~ s/\$((\$?)\{([^\}]*)\})/
-        $2 ? $1 : ( $self->_resolve_var( $3, $ancs ) || '' )/ge;
+        $2 ? $1 : ( $self->_resolve_var( $3, [ @{$ancs} ] ) || '' )/ge;
   }
   elsif ( ref($node) eq 'HASH' && $self->{process_directives} ) {
     if ( defined $node->{var} ) {
-      $node = $self->_resolve_var( $node->{var}, $ancs );
+      $node = $self->_resolve_var( $node->{var}, [ @{$ancs} ] );
     }
     elsif ( defined $node->{include} ) {
       $node = $self->_build_tree( $node->{include} );
@@ -283,9 +283,11 @@ sub _resolve_var {
   my $name = shift;
   my $ancs = shift;
 
+  my $value;
+
   if ( $name =~ m/^\./ ) {
-    my @tokens    = split( /\./, $name, -1 );
-    my $anc_index = -1;
+    my $node;
+    my @tokens = split( /\./, $name, -1 );
 
     while (1) {
       my $token = $tokens[0];
@@ -297,57 +299,52 @@ sub _resolve_var {
       shift @tokens;
 
       last unless @tokens;
+      next unless @{$ancs};
 
-      $anc_index++;
+      $node = shift @{$ancs};
     }
 
-    my $node = $ancs->[$anc_index];
-
-    my $value = eval {
-      $self->_fetch_value( $node, \@tokens, $ancs );
+    $value = eval {
+      $self->_fetch_value( $node, $ancs, \@tokens );
     };
 
     if ($@) {
       chomp $@;
       die qq{Can't resolve variable "$name"; $@\n};
     }
-
-    return $value;
   }
+  else {
+    my $vars = $self->{_vars};
 
-  my $vars = $self->{_vars};
+    unless ( defined $vars->{$name} ) {
+      my @tokens = split( /\./, $name, -1 );
 
-  unless ( defined $vars->{$name} ) {
-    my @tokens = split( /\./, $name, -1 );
+      $vars->{$name} = eval {
+        $self->_fetch_value( $self->{_config}, [], \@tokens );
+      };
 
-    my $value = eval {
-      $self->_fetch_value( $self->{_config}, \@tokens, $ancs );
-    };
-
-    if ($@) {
-      chomp $@;
-      die qq{Can't resolve variable "$name"; $@\n};
+      if ($@) {
+        chomp $@;
+        die qq{Can't resolve variable "$name"; $@\n};
+      }
     }
 
-    $vars->{$name} = $value;
+    $value = $vars->{$name};
   }
 
-  return $vars->{$name};
+  return $value;
 }
 
 ####
 sub _fetch_value {
   my $self   = shift;
   my $node   = shift;
-  my $tokens = shift;
   my $ancs   = shift;
+  my $tokens = shift;
 
-  unless ( @{$tokens} ) {
-    return $node;
-  }
+  return $node unless @{$tokens};
 
   my $value;
-  my @anc_stack = @{$ancs};
 
   while (1) {
     my $token = shift @{$tokens};
@@ -357,11 +354,11 @@ sub _fetch_value {
     if ( ref($node) eq 'HASH' ) {
       last unless defined $node->{$token};
 
-      unshift( @anc_stack, $node );
+      unshift( @{$ancs}, $node );
 
       unless ( @{$tokens} ) {
-        $value = $self->_process_node( $node->{$token}, \@anc_stack );
-        $node->{$token} = $value;
+        $node->{$token} = $self->_process_node( $node->{$token}, $ancs );
+        $value = $node->{$token};
 
         last;
       }
@@ -377,11 +374,11 @@ sub _fetch_value {
 
       last unless defined $node->[$token];
 
-      unshift( @anc_stack, $node );
+      unshift( @{$ancs}, $node );
 
       unless ( @{$tokens} ) {
-        $value = $self->_process_node( $node->[$token], \@anc_stack );
-        $node->[$token] = $value;
+        $node->[$token] = $self->_process_node( $node->[$token], $ancs );
+        $value = $node->[$token];
 
         last;
       }
@@ -571,7 +568,7 @@ referenced configuration parameter.
 
     dirs:
       root_dir: "/myapp"
-      templates_dir: "${.root_dir}/templates"
+      templates_dir: "${myapp.dirs.root_dir}/templates"
       sessions_dir: "${.root_dir}/sessions"
       media_dirs:
         - "${..root_dir}/media/${myapp.media_formats.0}"
