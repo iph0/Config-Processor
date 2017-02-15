@@ -4,7 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
-our $VERSION = '0.21_03';
+our $VERSION = '0.22';
 
 use File::Spec;
 use YAML::XS qw( LoadFile );
@@ -59,7 +59,7 @@ sub new {
       ? $params{process_directives} : 1;
   $self->{export_env} = $params{export_env};
 
-  $self->{_merger} = Hash::Merge->new('CONFIG_PRECEDENT');
+  $self->{_merger}     = Hash::Merge->new('CONFIG_PRECEDENT');
   $self->{_config}     = undef;
   $self->{_vars}       = {};
   $self->{_seen_nodes} = {};
@@ -763,7 +763,7 @@ Eugene Ponizovsky, E<lt>ponizovsky@gmail.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2016, Eugene Ponizovsky, E<lt>ponizovsky@gmail.comE<gt>.
+Copyright (c) 2016-2017, Eugene Ponizovsky, E<lt>ponizovsky@gmail.comE<gt>.
 All rights reserved.
 
 This module is free software; you can redistribute it and/or modify it under
