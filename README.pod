@@ -162,7 +162,7 @@ After merging of two files we will get:
 
 Config::Processor can interpolate variables in string values (if you need alias
 for complex structures see C<var> directive). Variable names can be absolute or
-relative. Relative variable names begins with dot "." The number of dots
+relative. Relative variable names begins with "." (dot). The number of dots
 depends on the nesting level of the current configuration parameter relative to
 referenced configuration parameter.
 
@@ -211,7 +211,7 @@ After processing we will get:
 
 Assigns configuration parameter value to another configuration parameter.
 Variable names in the directive can be absolute or relative. Relative variable
-names begins with dot ".". The number of dots depends on the nesting level of
+names begins with "." (dot). The number of dots depends on the nesting level of
 the current configuration parameter relative to referenced configuration
 parameter.
 
