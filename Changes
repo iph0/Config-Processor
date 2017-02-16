@@ -1,6 +1,9 @@
 Revision history for Perl extension Config::Processor.
 
-0.22 Tue Feb 15 11:46:27 MSK 2017
+0.24 Thu Feb 16 12:16:38 MSK 2017
+  - Added README.pod file instead of README file.
+
+0.22 Wed Feb 15 11:46:27 MSK 2017
   - Added resolving of relative variable names.
 
 0.20 Sat Jan 28 15:50:37 MSK 2017
