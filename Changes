@@ -1,5 +1,8 @@
 Revision history for Perl extension Config::Processor.
 
+0.26 Fri Mar 24 11:22:54 MSK 2017
+  - README.pod replaced by README.md.
+
 0.24 Thu Feb 16 12:16:38 MSK 2017
   - Added README.pod file instead of README file.
 
