@@ -20,28 +20,6 @@ my %FILE_EXTENSIONS_MAP = (
   jsn  => 'json',
 );
 
-Hash::Merge::specify_behavior(
-  {
-    SCALAR => {
-      SCALAR => sub { $_[1] },
-      ARRAY  => sub { $_[1] },
-      HASH   => sub { $_[1] },
-    },
-    ARRAY => {
-      SCALAR => sub { $_[1] },
-      ARRAY  => sub { $_[1] },
-      HASH   => sub { $_[1] },
-    },
-    HASH => {
-      SCALAR => sub { $_[1] },
-      ARRAY  => sub { $_[1] },
-      HASH   => sub { Hash::Merge::_merge_hashes( $_[0], $_[1] ) },
-    },
-  },
-  'CONFIG_PRECEDENT',
-);
-
-
 sub new {
   my $class  = shift;
   my %params = @_;
